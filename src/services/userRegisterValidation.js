@@ -27,9 +27,6 @@ module.exports = async (userData) => {
 
   try {
     const user = await User.findOne({ email });
-    if (user) {
-      throw new AppError("Email already exists 123", 400);
-    }
   } catch (error) {
     throw new AppError("Email already exists", 400);
   }
