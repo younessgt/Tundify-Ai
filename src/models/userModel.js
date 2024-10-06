@@ -47,6 +47,20 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        delete ret.__v;
+        return ret;
+      },
+    },
     collection: "users",
     timestamps: true,
   }

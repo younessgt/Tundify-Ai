@@ -31,7 +31,6 @@ mongoose
   });
 
 // activate mongoose debugging mode on development environment
-
 if (process.env.NODE_ENV === "development") {
   mongoose.set("debug", true);
 }
