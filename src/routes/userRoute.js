@@ -8,5 +8,7 @@ const router = express.Router();
 router.use(trimRequest.all);
 
 router.route("/register").post(authController.register);
+router.route("/login").post(authController.login);
+router.route("/logout").get(authController.logout);
 
 module.exports = router;

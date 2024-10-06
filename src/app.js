@@ -9,6 +9,7 @@ const cors = require("cors");
 const logger = require("./configs/logger");
 const router = require("./routes/indexRoute");
 const globalErrorHandler = require("./controllers/errorController");
+const AppError = require("./utils/appError");
 
 const app = express();
 
@@ -53,6 +54,12 @@ app.options("*", cors());
 // Routes
 app.use("/api/v1", router);
 
+// Catch all other routes which are not defined
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
 // Error handling middleware
 app.use(globalErrorHandler);
+
 module.exports = app;
