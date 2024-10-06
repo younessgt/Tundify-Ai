@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
 // Create a user schema
 
@@ -65,6 +66,17 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Encrypt password before saving
+userSchema.pre("save", async function (next) {
+  // Only run this function if password was actually modified
+  if (!this.isModified("password")) return next();
+
+  this.password = await bcrypt.hash(this.password, 12);
+
+  this.confirmPassword = undefined;
+  next();
+});
 
 // Create a model
 const User = mongoose.model("User", userSchema);
