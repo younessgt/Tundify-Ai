@@ -31,11 +31,11 @@ module.exports = (err, req, resp, next) => {
 
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, req, resp);
+  } else if (process.env.NODE_ENV === "production") {
+    let error;
+
+    Object.defineProperties(error, Object.getOwnPropertyDescriptors(err));
+
+    sendErrorProd(error, req, resp);
   }
-
-  let error;
-
-  Object.defineProperties(error, Object.getOwnPropertyDescriptors(err));
-
-  sendErrorProd(error, req, resp);
 };
