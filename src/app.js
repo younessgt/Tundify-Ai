@@ -7,6 +7,8 @@ const compression = require("compression");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const logger = require("./configs/logger");
+const router = require("./routes/indexRoute");
+const globalErrorHandler = require("./controllers/errorController");
 
 const app = express();
 
@@ -38,14 +40,19 @@ app.use(cors());
 
 app.options("*", cors());
 
-app.get("/", (req, resp) => {
-  //   logger.info("Hello World!");
-  //   try {
-  //     throw new Error("Something went wrong!");
-  //   } catch (error) {
-  //     logger.error(error); // Log the error
-  //   }
-  resp.status(200).send("Hello World!");
-});
+// app.get("/", (req, resp) => {
+//   //   logger.info("Hello World!");
+//   //   try {
+//   //     throw new Error("Something went wrong!");
+//   //   } catch (error) {
+//   //     logger.error(error); // Log the error
+//   //   }
+//   resp.status(200).send("Hello World!");
+// });
 
+// Routes
+app.use("/api/v1", router);
+
+// Error handling middleware
+app.use(globalErrorHandler);
 module.exports = app;
