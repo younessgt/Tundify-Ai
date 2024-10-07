@@ -10,5 +10,6 @@ router.use(trimRequest.all);
 router.route("/register").post(authController.register);
 router.route("/login").post(authController.login);
 router.route("/logout").get(authController.logout);
+router.route("/refreshToken").post(authController.refreshToken);
 
 module.exports = router;

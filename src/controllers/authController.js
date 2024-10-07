@@ -5,16 +5,16 @@ const userRegisterValidation = require("../services/userRegisterValidation");
 const catchAsync = require("../utils/catchAsync");
 const logger = require("../configs/logger");
 const AppError = require("../utils/appError");
-
+const tokenValidation = require("../services/tokenValidation");
 const { DEFAULT_PICTURE, DEFAULT_STATUS } = process.env;
 
-const signToken = (id) => {
+const signToken = (id, secret, expireTime) => {
   return new Promise((resolve, reject) => {
     jwt.sign(
       { id },
-      process.env.JWT_SECRET,
+      secret,
       {
-        expiresIn: process.env.JWT_EXPIRES_IN,
+        expiresIn: expireTime,
       },
       (err, token) => {
         if (err) return reject(err);
@@ -24,9 +24,25 @@ const signToken = (id) => {
   });
 };
 
-const createAccessToken = async (user) => {
+const createSendAccessToken = async (user, resp) => {
   try {
-    const token = await signToken(user._id);
+    const token = await signToken(
+      user._id,
+      process.env.JWT_SECRET,
+      process.env.JWT_EXPIRES_IN
+    );
+
+    const cookieOptions = {
+      maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 60 * 1000,
+      httpOnly: true,
+      path: "/api/v1/auth/refreshToken",
+    };
+
+    if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
+
+    // Send token via cookie
+    resp.cookie("jwt", token, cookieOptions);
+
     return token;
   } catch (error) {
     logger.error(error);
@@ -34,11 +50,15 @@ const createAccessToken = async (user) => {
   }
 };
 
-const createRefreshToken = async (user, resp) => {
+const createSendRefreshToken = async (user, resp) => {
   try {
-    const token = await signToken(user._id);
+    const token = await signToken(
+      user._id,
+      process.env.REFRESH_JWT_SECRET,
+      process.env.REFRESH_JWT_EXPIRES_IN
+    );
     const cookieOptions = {
-      maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+      maxAge: process.env.REFRESH_JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
       httpOnly: true,
       path: "/api/v1/auth/refreshToken",
     };
@@ -49,7 +69,7 @@ const createRefreshToken = async (user, resp) => {
     resp.cookie("refresh_jwt", token, cookieOptions);
 
     // Remove password from output
-    user.password = undefined;
+    // user.password = undefined;
 
     return token;
   } catch (error) {
@@ -90,11 +110,11 @@ exports.register = catchAsync(async (req, resp) => {
     });
   }
 
-  const accessToken = await createAccessToken(newUser, resp);
-  const refreshToken = await createRefreshToken(newUser, resp);
+  const accessToken = await createSendAccessToken(newUser, resp);
+  const refreshToken = await createSendRefreshToken(newUser, resp);
 
   if (!accessToken || !refreshToken) {
-    next(new AppError("Token not Generated", 404));
+    next(new AppError("Something went very wrong!", 500));
   }
 
   resp.status(201).json({
@@ -122,11 +142,11 @@ exports.login = catchAsync(async (req, resp, next) => {
     return next(new AppError("Incorrect email or password", 401));
   }
 
-  const accessToken = await createAccessToken(user, resp);
-  const refreshToken = await createRefreshToken(user, resp);
+  const accessToken = await createSendAccessToken(user, resp);
+  const refreshToken = await createSendRefreshToken(user, resp);
 
   if (!accessToken || !refreshToken) {
-    next(new AppError("Token not Generated", 404));
+    next(new AppError("Something went very wrong!", 500));
   }
 
   resp.status(200).json({
@@ -139,9 +159,45 @@ exports.login = catchAsync(async (req, resp, next) => {
 
 exports.logout = (req, resp) => {
   resp.clearCookie("refresh_jwt", { path: "/api/v1/auth/refreshToken" });
+  resp.clearCookie("jwt", { path: "/api/v1/auth/refreshToken" });
 
   resp.status(200).json({
     status: "success",
     message: "logout successfully",
   });
 };
+
+exports.refreshToken = catchAsync(async (req, resp, next) => {
+  const { refresh_jwt } = req.cookies;
+
+  // Check if token is available
+  if (!refresh_jwt) {
+    return next(
+      new AppError("You are not logged in! Please log in to get access", 401)
+    );
+  }
+
+  const decoded = await tokenValidation(refresh_jwt);
+
+  // Check if user still exists
+  const user = await User.findById(decoded.id);
+
+  if (!user) {
+    return next(
+      new AppError("The user belonging to this token does no longer exist", 401)
+    );
+  }
+
+  // Create new access token
+  const accessToken = await createSendAccessToken(user, resp);
+
+  if (!accessToken) {
+    next(new AppError("Something went wrong!", 500));
+  }
+
+  resp.status(200).json({
+    status: "success",
+    message: "Token generated successfully",
+    token: accessToken,
+  });
+});
