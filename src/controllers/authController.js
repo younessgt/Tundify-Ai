@@ -177,7 +177,14 @@ exports.refreshToken = catchAsync(async (req, resp, next) => {
     );
   }
 
-  const decoded = await tokenValidation(refresh_jwt);
+  const decoded = await tokenValidation(
+    refresh_jwt,
+    process.env.REFRESH_JWT_SECRET
+  );
+
+  if (!decoded) {
+    return next(new AppError("Invalid token. Please log in again!", 401));
+  }
 
   // Check if user still exists
   const user = await User.findById(decoded.id);

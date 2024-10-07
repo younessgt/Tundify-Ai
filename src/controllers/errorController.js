@@ -28,6 +28,11 @@ const sendErrorProd = (err, req, resp) => {
 const handleJWTError = () =>
   new AppError("Invalid token. Please log in again!", 401);
 
+// handle JWT expired error
+
+const handleJWTExpireError = () =>
+  new AppError("Your token has expired! Please log in again.", 401);
+
 // error handler middleware
 module.exports = (err, req, resp, next) => {
   err.statusCode = err.statusCode || 500;
@@ -41,6 +46,7 @@ module.exports = (err, req, resp, next) => {
     Object.defineProperties(error, Object.getOwnPropertyDescriptors(err));
 
     if (err.name === "JsonWebTokenError") error = handleJWTError();
+    if (err.name === "TokenExpiredError") error = handleJWTExpireError();
     sendErrorProd(error, req, resp);
   }
 };
