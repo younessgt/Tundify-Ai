@@ -1,7 +1,9 @@
 // import { Provider } from "react-redux";
 // import { store } from "../store/store";
+
 import "./globals.css";
 import ReduxProvider from "../components/ReduxProvider";
+import DarkModeToggle from "../components/DarkModeToggle";
 
 export const metadata = {
   title: "TundiFy",
@@ -10,9 +12,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body>
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          {/* <DarkModeToggle /> */}
+          {children}
+        </ReduxProvider>
       </body>
     </html>
   );

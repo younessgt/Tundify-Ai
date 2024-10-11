@@ -2,12 +2,16 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 // import { userSlice } from "../features/userSlice";
-import createFilter from "redux-persist-transform-filter";
+import { createFilter } from "redux-persist-transform-filter";
 import { createTransform } from "redux-persist";
 import { userSlice } from "../features/userSlice";
 
 // filter configuration
-const SaveOnlyUserFilter = createFilter("userState", ["user"]);
+const SaveOnlyUserFilter = createFilter("userState", [
+  "user",
+  "status",
+  "error",
+]);
 
 // const userTransform = createTransform(
 //   // Transform the state being persisted

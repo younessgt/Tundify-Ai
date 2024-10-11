@@ -18,8 +18,8 @@ export default function Home() {
       >
         Logout
       </button>
-      <h1 className="btn">Hello World</h1>
-      <Link href="/about">About</Link>
+      <h1 className="dark:bg-dark_bg_1">Hello World</h1>
+
       <CallIcon />
       <ChatIcon />
     </div>

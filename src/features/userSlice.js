@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { REHYDRATE } from "redux-persist";
+// import { REHYDRATE } from "redux-persist";
 
 const initialState = {
-  status: "1",
+  status: "",
   error: "2",
   user: {
     id: "",
