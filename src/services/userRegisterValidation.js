@@ -9,6 +9,10 @@ module.exports = async (userData) => {
     throw new AppError("Please fill all fields", 400);
   }
 
+  if (!Validate.isLength(name, { min: 2, max: 16 })) {
+    throw new AppError("Name must be between 2 and 16 characters", 400);
+  }
+
   if (!Validate.isEmail(email)) {
     throw new AppError("Invalid email address", 400);
   }

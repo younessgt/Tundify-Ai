@@ -32,16 +32,16 @@ const createSendAccessToken = async (user, resp) => {
       process.env.JWT_EXPIRES_IN
     );
 
-    const cookieOptions = {
-      maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 60 * 1000,
-      httpOnly: true,
-      path: "/api/v1/auth/refreshToken",
-    };
+    // const cookieOptions = {
+    //   maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 60 * 1000,
+    //   httpOnly: true,
+    //   path: "/api/v1/auth/refreshToken",
+    // };
 
-    if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
+    // if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
-    // Send token via cookie
-    resp.cookie("jwt", token, cookieOptions);
+    // // Send token via cookie
+    // resp.cookie("jwt", token, cookieOptions);
 
     return token;
   } catch (error) {
@@ -120,8 +120,8 @@ exports.register = catchAsync(async (req, resp) => {
   resp.status(201).json({
     status: "success",
     message: "User registered successfully",
-    token: accessToken,
-    user: newUser,
+    // token: accessToken,
+    user: { ...newUser, accessToken },
   });
 });
 
@@ -152,14 +152,14 @@ exports.login = catchAsync(async (req, resp, next) => {
   resp.status(200).json({
     status: "success",
     message: "login successfully",
-    token: accessToken,
-    user,
+    // token: accessToken,
+    user: { ...newUser, accessToken },
   });
 });
 
 exports.logout = (req, resp) => {
   resp.clearCookie("refresh_jwt", { path: "/api/v1/auth/refreshToken" });
-  resp.clearCookie("jwt", { path: "/api/v1/auth/refreshToken" });
+  // resp.clearCookie("jwt", { path: "/api/v1/auth/refreshToken" });
 
   resp.status(200).json({
     status: "success",
@@ -205,6 +205,7 @@ exports.refreshToken = catchAsync(async (req, resp, next) => {
   resp.status(200).json({
     status: "success",
     message: "Token generated successfully",
-    token: accessToken,
+    user: { ...newUser, accessToken },
+    // token: accessToken,
   });
 });
