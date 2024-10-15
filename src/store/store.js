@@ -7,11 +7,7 @@ import { createTransform } from "redux-persist";
 import { userSlice } from "../features/userSlice";
 
 // filter configuration
-const SaveOnlyUserFilter = createFilter("userState", [
-  "user",
-  "status",
-  "error",
-]);
+const SaveOnlyUserFilter = createFilter("userState", ["user"]);
 
 // const userTransform = createTransform(
 //   // Transform the state being persisted

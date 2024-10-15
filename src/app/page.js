@@ -7,8 +7,8 @@ import { CallIcon, ChatIcon } from "../components/svg";
 
 export default function Home() {
   const dispatch = useDispatch();
-  const userState = useSelector((state) => state.userState);
-  console.log("hello", userState);
+  const { user } = useSelector((state) => state.userState);
+  console.log(user);
   return (
     <div className="dark">
       <button
