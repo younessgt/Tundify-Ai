@@ -1,3 +1,5 @@
+const AppError = require("../utils/appError");
+
 // send error in development
 const sendErrorDev = (err, req, resp) => {
   resp.status(err.statusCode).json({
@@ -32,6 +34,12 @@ const handleJWTError = () =>
 const handleJWTExpireError = () =>
   new AppError("Your token has expired! Please log in again.", 401);
 
+const handleDuplicateFieldsDB = (err) => {
+  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
+  const message = `Duplicate field value: ${value}. Please use another value!`;
+  // console.log(err.errmsg);
+  return new AppError(message, 400);
+};
 // error handler middleware
 module.exports = (err, req, resp, next) => {
   err.statusCode = err.statusCode || 500;
@@ -39,13 +47,16 @@ module.exports = (err, req, resp, next) => {
 
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, req, resp);
-  } else if (process.env.NODE_ENV === "production") {
-    let error;
-
+  } else {
+    let error = {};
+    console.log(err);
     Object.defineProperties(error, Object.getOwnPropertyDescriptors(err));
 
     if (err.name === "JsonWebTokenError") error = handleJWTError();
     if (err.name === "TokenExpiredError") error = handleJWTExpireError();
+    if (err.code === 11000) {
+      error = handleDuplicateFieldsDB(err);
+    }
     sendErrorProd(error, req, resp);
   }
 };

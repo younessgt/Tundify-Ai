@@ -121,7 +121,14 @@ exports.register = catchAsync(async (req, resp) => {
     status: "success",
     message: "User registered successfully",
     // token: accessToken,
-    user: { ...newUser, accessToken },
+    user: {
+      accessToken,
+      _id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      status: newUser.status,
+      picture: newUser.picture,
+    },
   });
 });
 
