@@ -17,6 +17,11 @@ module.exports = async (userData) => {
     throw new AppError("Invalid email address", 400);
   }
 
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new AppError("Email already exists", 400);
+  }
+
   if (password.length < 8) {
     throw new AppError("Password must be at least 8 characters", 400);
   }
@@ -29,10 +34,5 @@ module.exports = async (userData) => {
     throw new AppError("Status must be less than 64 characters", 400);
   }
 
-  try {
-    const user = await User.findOne({ email });
-  } catch (error) {
-    throw new AppError("Email already exists", 400);
-  }
   return true;
 };

@@ -20,8 +20,8 @@ if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 app.use(helmet());
 
 // Parse JSON bodies (as sent by API clients)
-app.use(express.json());
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
@@ -34,12 +34,23 @@ app.use(compression());
 app.use(fileUpload({ useTempFiles: true }));
 
 // Enable CORS
-app.use(cors());
+// app.use(cors());
 
-// this options method is used to handle preflight requests that are sent by the browser
-// to check if the server is ready to accept non simple requests  such as PUT, PATCH, DELETE
+// // this options method is used to handle preflight requests that are sent by the browser
+// // to check if the server is ready to accept non simple requests  such as PUT, PATCH, DELETE
 
-app.options("*", cors());
+// app.options("*", cors());
+
+const corsOptions = {
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+// Pre-flight requests for all routes
+app.options("*", cors(corsOptions));
 
 // app.get("/", (req, resp) => {
 //   //   logger.info("Hello World!");
