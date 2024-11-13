@@ -22,14 +22,13 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (values, { rejectWithValue }) => {
     try {
-      // console.log(AUTH_ENDPOINT);
       const response = await axios.post(`${AUTH_ENDPOINT}/register`, {
         ...values,
       });
-      // console.log("response from RgisterUser", response);
+
       return response.data;
     } catch (error) {
-      // console.log("error from registerUser", error);
+      console.log("error from registerUser", error);
       return rejectWithValue(error.response.data);
     }
   }

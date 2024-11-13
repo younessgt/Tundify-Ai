@@ -10,14 +10,18 @@ import { signUpSchema } from "../../utils/validation";
 import RegisterInput from "./RegisterInput";
 import { registerUser } from "../../features/userSlice";
 import { useRouter } from "next/navigation";
+import Picture from "./Picture";
 
 export default function RegisterForm() {
   const { status, error, user } = useSelector((state) => state.userState);
   const [mounted, setMounted] = useState(false);
-  const router = useRouter(); // Use useRouter directly
+  const router = useRouter();
+  const [picture, setPicture] = useState(null);
+  const [pictureBase64, setPictureBase64] = useState("");
 
   useEffect(() => {
-    setMounted(true); // Set mounted to true after the component is rendered
+    // Setting mounted to true after the component is rendered
+    setMounted(true);
   }, []);
 
   const {
@@ -31,22 +35,27 @@ export default function RegisterForm() {
   const dispatch = useDispatch();
 
   const onSubmit = async (data) => {
-    const resp = await dispatch(registerUser({ ...data, picture: "" }));
-    // console.log("response from Onsbmit: ", resp);
+    const resp = await dispatch(
+      registerUser({ ...data, picture: pictureBase64 })
+    );
+    console.log("response from Onsbmit: ", resp);
 
     if (resp.payload.user) {
       router.push("/");
     }
+    // console.log(data);
   };
 
   return (
-    <div className="h-screen w-full flex items-center justify-center overflow-hidden ">
-      <div className="max-w-md space-y-8 p-10 dark:bg-dark_bg_2 rounded-lg">
+    <div className=" min-h-screen w-full flex items-center justify-center px-4 sm:px-6 lg:px-8 ">
+      <div className="  w-full max-w-md space-y-8 p-10 dark:bg-dark_bg_2 rounded-lg sm:p-8">
         <div className="text-center dark:text-dark_text_1">
-          <h2 className="text-3xl font-bold mt-6">Welcome To TundiFy</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold  ">
+            Welcome To TundiFy
+          </h2>
           <p className="text-sm mt-2"> Create an account to get started</p>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
           <RegisterInput
             name="name"
             type="text"
@@ -81,6 +90,11 @@ export default function RegisterForm() {
             placeholder="Status (Optional)"
             register={register}
             error={errors?.status?.message}
+          />
+          <Picture
+            pictureBase64={pictureBase64}
+            setPicture={setPicture}
+            setPictureBase64={setPictureBase64}
           />
           {error && (
             <div>

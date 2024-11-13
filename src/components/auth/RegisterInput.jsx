@@ -15,7 +15,7 @@ export default function RegisterInput({
     setShowPassword(!showPassword);
   };
   return (
-    <div className="mt-8 content-center dark:text-dark_text_1 space-y-1 relative">
+    <div className=" content-center dark:text-dark_text_1  relative">
       <label htmlFor={name} className="text-sm font-bold tracking-wide  pl-1">
         {placeholder}
       </label>
@@ -30,6 +30,11 @@ export default function RegisterInput({
             : type
         }
         placeholder={placeholder}
+        // autoComplete={
+        //   name === "password" || name === "confirmPassword"
+        //     ? "new-password"
+        //     : "on"
+        // }
         {...register(name)}
       />
       {name === "password" || name === "confirmPassword" ? (
@@ -42,7 +47,7 @@ export default function RegisterInput({
           {showPassword ? <FaEye /> : <FaEyeSlash />}
         </button>
       ) : null}
-      {error && <p className="text-red-500 text-xs">{error}</p>}
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );
 }
