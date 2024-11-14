@@ -6,9 +6,16 @@ export default function Picture({
   setPicture,
   setPictureBase64,
   pictureBase64,
+  onError,
 }) {
   const pictureRef = useRef();
   const [error, setError] = useState("");
+
+  const updateError = (error) => {
+    setError(error);
+    // Pass the error to the parent component if an error occurs during picture upload or compression
+    onError(error);
+  };
 
   // function to handle the picture change
   const pictureChange = async (e) => {
@@ -18,13 +25,13 @@ export default function Picture({
       image.type !== "image/jpeg" &&
       image.type !== "image/webp"
     ) {
-      setError("Invalid file type. Only PNG, JPEG, and WEBP are allowed.");
+      updateError("Invalid file type. Only PNG, JPEG, and WEBP are allowed");
       return;
     } else if (image.size > 1024 * 1024 * 2) {
-      setError("File size should not exceed 2MB");
+      updateError("Image size must be less than 2MB");
       return;
     }
-    setError("");
+    updateError("");
     try {
       // Set compression options
       const options = {
@@ -35,7 +42,7 @@ export default function Picture({
 
       // Compress the image file
       const compressedImage = await imageCompression(image, options);
-      console.log("compressedImage");
+      // console.log("compressedImage");
 
       // Convert compressed image to Base64
       const reader = new FileReader();
@@ -46,8 +53,8 @@ export default function Picture({
         setPicture(compressedImage);
       };
     } catch (error) {
-      console.error("Error compressing the image:", error);
-      setError("Image compression failed");
+      // console.error("Error compressing the image:", error);
+      updateError("Error compressing the image. Please try again.");
     }
   };
 
