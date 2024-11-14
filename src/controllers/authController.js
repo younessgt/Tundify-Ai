@@ -85,6 +85,25 @@ const createSendRefreshToken = async (user, resp) => {
   //   });
 };
 
+exports.validateRegister = catchAsync(async (req, resp, next) => {
+  const { name, email, password, confirmPassword, status, picture } = req.body;
+
+  // Validate user input
+  await userRegisterValidation({
+    name,
+    email,
+    password,
+    confirmPassword,
+    status,
+    picture,
+  });
+
+  resp.status(200).json({
+    status: "success",
+    message: "User input is valid",
+  });
+});
+
 exports.register = catchAsync(async (req, resp) => {
   const { name, email, password, confirmPassword, status, picture } = req.body;
 
