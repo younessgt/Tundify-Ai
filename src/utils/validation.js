@@ -20,3 +20,8 @@ export const signUpSchema = Yup.object().shape({
   ),
   status: Yup.string().max(64, "Status must be less than 64 characters"),
 });
+
+export const loginSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string().required("Password is required"),
+});

@@ -18,7 +18,7 @@ export default function Home() {
       >
         Logout
       </button>
-      <h1 className="dark:bg-dark_bg_1">Hello World</h1>
+      <h1 className="dark:bg-dark_bg_1">{user.email}</h1>
 
       <CallIcon />
       <ChatIcon />

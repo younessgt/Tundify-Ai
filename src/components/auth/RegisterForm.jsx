@@ -54,6 +54,7 @@ export default function RegisterForm() {
     return resp.data;
   };
 
+  // Handles errors related to picture upload and sets the error state.
   const handlePictureError = (error) => {
     setErrorPicture(error);
   };
@@ -109,7 +110,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className=" min-h-screen w-full flex items-center justify-center px-4 sm:px-6 lg:px-8 border-2">
+    <div className=" min-h-screen w-full flex items-center justify-center px-4 sm:px-6 lg:px-8 ">
       <div className="  w-full max-w-md space-y-8 p-10 dark:bg-dark_bg_2 rounded-lg sm:p-8">
         <div className="text-center dark:text-dark_text_1">
           <h2 className="text-2xl sm:text-3xl font-bold  ">

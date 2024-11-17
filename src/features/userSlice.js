@@ -12,7 +12,7 @@ const initialState = {
     name: "",
     email: "",
     picture: "",
-    token: "",
+    accessToken: "",
   },
 };
 
@@ -23,6 +23,22 @@ export const registerUser = createAsyncThunk(
   async (values, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${AUTH_ENDPOINT}/register`, {
+        ...values,
+      });
+
+      return response.data;
+    } catch (error) {
+      // console.log("error from registerUser", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (values, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${AUTH_ENDPOINT}/login`, {
         ...values,
       });
 
@@ -46,8 +62,12 @@ export const userSlice = createSlice({
         name: "",
         email: "",
         picture: "",
-        token: "",
+        accessToken: "",
       };
+    },
+
+    updateAccessToken: (state, action) => {
+      state.user.accessToken = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -60,6 +80,17 @@ export const userSlice = createSlice({
         state.user = action.payload.user;
       })
       .addCase(registerUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload.message;
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.status = "successLogin";
+        state.user = action.payload.user;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload.message;
       });
