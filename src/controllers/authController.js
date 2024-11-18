@@ -60,10 +60,9 @@ const createSendRefreshToken = async (user, resp) => {
     const cookieOptions = {
       maxAge: process.env.REFRESH_JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      path: "/api/v1/auth/refreshToken",
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
     };
-
-    if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
     // Send token via cookie
     resp.cookie("refresh_jwt", token, cookieOptions);
@@ -179,12 +178,19 @@ exports.login = catchAsync(async (req, resp, next) => {
     status: "success",
     message: "login successfully",
     // token: accessToken,
-    user: { ...newUser, accessToken },
+    user: {
+      accessToken,
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      status: user.status,
+      picture: user.picture,
+    },
   });
 });
 
 exports.logout = (req, resp) => {
-  resp.clearCookie("refresh_jwt", { path: "/api/v1/auth/refreshToken" });
+  resp.clearCookie("refresh_jwt", { path: "/" });
   // resp.clearCookie("jwt", { path: "/api/v1/auth/refreshToken" });
 
   resp.status(200).json({
@@ -231,7 +237,41 @@ exports.refreshToken = catchAsync(async (req, resp, next) => {
   resp.status(200).json({
     status: "success",
     message: "Token generated successfully",
-    user: { ...newUser, accessToken },
+    user: { ...user, accessToken },
     // token: accessToken,
+  });
+});
+
+exports.validateRefreshToken = catchAsync(async (req, resp, next) => {
+  const { refresh_jwt } = req.cookies;
+
+  // Check if token is available
+  if (!refresh_jwt) {
+    return next(
+      new AppError("You are not logged in! Please log in to get access", 401)
+    );
+  }
+
+  const decoded = await tokenValidation(
+    refresh_jwt,
+    process.env.REFRESH_JWT_SECRET
+  );
+
+  if (!decoded) {
+    return next(new AppError("Invalid token. Please log in again!", 401));
+  }
+
+  // Check if user still exists
+  const user = await User.findById(decoded.id);
+
+  if (!user) {
+    return next(
+      new AppError("The user belonging to this token does no longer exist", 401)
+    );
+  }
+
+  resp.status(200).json({
+    status: "success",
+    message: "Token is valid",
   });
 });
