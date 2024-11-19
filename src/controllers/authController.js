@@ -58,10 +58,13 @@ const createSendRefreshToken = async (user, resp) => {
       process.env.REFRESH_JWT_EXPIRES_IN
     );
     const cookieOptions = {
-      maxAge: process.env.REFRESH_JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+      // maxAge: process.env.REFRESH_JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+      maxAge: process.env.REFRESH_JWT_COOKIE_EXPIRES_IN * 60 * 1000,
+
       httpOnly: true,
       path: "/",
       secure: process.env.NODE_ENV === "production",
+      // sameSite: "lax",
     };
 
     // Send token via cookie
@@ -229,7 +232,7 @@ exports.refreshToken = catchAsync(async (req, resp, next) => {
 
   // Create new access token
   const accessToken = await createSendAccessToken(user, resp);
-
+  console.log("new accessToken created");
   if (!accessToken) {
     next(new AppError("Something went wrong!", 500));
   }
@@ -243,8 +246,9 @@ exports.refreshToken = catchAsync(async (req, resp, next) => {
 });
 
 exports.validateRefreshToken = catchAsync(async (req, resp, next) => {
-  const { refresh_jwt } = req.cookies;
+  const { refresh_jwt } = req.body;
 
+  // console.log("refresh_jwt", refresh_jwt);
   // Check if token is available
   if (!refresh_jwt) {
     return next(
@@ -274,4 +278,42 @@ exports.validateRefreshToken = catchAsync(async (req, resp, next) => {
     status: "success",
     message: "Token is valid",
   });
+});
+
+exports.validateAccessToken = catchAsync(async (req, resp, next) => {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) {
+    resp.status(401).json({
+      status: "fail",
+      valid: false,
+      expired: false,
+      message: "Token is not available",
+    });
+  }
+
+  try {
+    const decoded = await tokenValidation(token, process.env.JWT_SECRET);
+    resp.status(200).json({
+      status: "success",
+      valid: true,
+      expired: false,
+      message: "Token is valid",
+    });
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return resp
+        .status(200)
+        .json({ valid: false, expired: true, message: "Token has expired" });
+    }
+    return resp
+      .status(401)
+      .json({ valid: false, expired: false, message: "Token is invalid" });
+  }
 });

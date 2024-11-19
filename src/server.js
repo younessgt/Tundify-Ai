@@ -37,7 +37,8 @@ if (process.env.NODE_ENV === "development") {
 
 // Start the server on the specified port
 const PORT = process.env.PORT || 8000;
-const server = app.listen(PORT, () => {
+const HOST = "localhost";
+const server = app.listen(PORT, HOST, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 

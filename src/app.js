@@ -12,7 +12,7 @@ const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/appError");
 
 const app = express();
-
+app.use(cookieParser());
 // HTTP request logger middleware for node.js
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
@@ -22,7 +22,6 @@ app.use(helmet());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
-app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -43,7 +42,7 @@ app.use(fileUpload({ useTempFiles: true }));
 
 const corsOptions = {
   origin: "http://localhost:3000",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };

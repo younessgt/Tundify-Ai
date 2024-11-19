@@ -15,11 +15,6 @@ router.route("/logout").get(authController.logout);
 router.route("/refreshToken").post(authController.refreshToken);
 router.route("/validateRefreshToken").post(authController.validateRefreshToken);
 
-router.route("/me").get(authMiddleware.protect, (req, resp) => {
-  resp.status(200).json({
-    status: "success",
-    user: req.user,
-  });
-});
+router.route("/validateAccessToken").get(authController.validateAccessToken);
 
 module.exports = router;
