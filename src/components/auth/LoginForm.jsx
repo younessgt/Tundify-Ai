@@ -10,9 +10,17 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../features/userSlice";
 import { useRouter } from "next/navigation";
+import PulseLoader from "react-spinners/PulseLoader";
+import { useEffect, useState } from "react";
 
 export default function LoginForm() {
   const { status, error, user } = useSelector((state) => state.userState);
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -26,7 +34,7 @@ export default function LoginForm() {
 
   const onSubmit = async (dataForm) => {
     const resp = await dispatch(loginUser({ ...dataForm }));
-    console.log(resp);
+    console.log("resp:", resp);
     if (resp.payload?.user) {
       router.push("/");
     }
@@ -83,12 +91,11 @@ export default function LoginForm() {
             type="submit"
             aria-label="sign in"
           >
-            {/* {mounted && status === "loading" ? (
+            {mounted && status === "loading" ? (
               <PulseLoader color="#fff" size={13} />
             ) : (
-              "Register"
-            )} */}
-            Sign In
+              "Sign In"
+            )}
           </button>
           {error && (
             <div className="flex justify-center">

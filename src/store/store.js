@@ -28,6 +28,7 @@ const SaveOnlyUserFilter = createFilter("userState", ["user"]);
 //  persist configuration
 const persistConfig = {
   key: "userState",
+  // key: "root",
   storage,
   whitelist: ["userState"],
   transforms: [SaveOnlyUserFilter],

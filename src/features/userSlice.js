@@ -38,9 +38,15 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (values, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${AUTH_ENDPOINT}/login`, {
-        ...values,
-      });
+      const response = await axios.post(
+        `${AUTH_ENDPOINT}/login`,
+        {
+          ...values,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
       return response.data;
     } catch (error) {
@@ -97,6 +103,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logout } = userSlice.actions;
+export const { logout, updateAccessToken } = userSlice.actions;
 
 export default userSlice.reducer;
