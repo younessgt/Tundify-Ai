@@ -5,6 +5,14 @@ import axios from "axios";
 
 // import { logout, updateAccessToken } from "../features/userSlice";
 
+/**
+ * Retrieves a valid access token. If the current access token is expired, it attempts to refresh it.
+ *
+ * @async
+ * @function getValidAccessToken
+ * @returns {Promise<string>} The valid access token.
+ * @throws {Error} If no access token is found, if the access token is invalid, or if there is an error during validation or refresh.
+ */
 export const getValidAccessToken = async () => {
   const state = store.getState();
   const accessToken = state.userState.user.accessToken;

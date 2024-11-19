@@ -3,6 +3,17 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
+/**
+ * Middleware function to handle authentication and token validation.
+ *
+ * This middleware checks for the presence of a refresh token in the request cookies.
+ * If the refresh token is not present or is invalid, it redirects the user to the login page.
+ * If the refresh token is valid, it allows the request to proceed.
+ *
+ * @param {import('next/server').NextRequest} req - The incoming request object.
+ * @returns {Promise<import('next/server').NextResponse>} - The response object, either redirecting to login or allowing the request to proceed.
+ */
+
 export async function middleware(req) {
   const AUTH_ENDPOINT = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth`;
   const refreshToken = req.cookies.get("refresh_jwt")?.value;
