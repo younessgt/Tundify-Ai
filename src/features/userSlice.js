@@ -47,7 +47,7 @@ export const loginUser = createAsyncThunk(
           withCredentials: true,
         }
       );
-
+      console.log("response from loginUser", response.data);
       return response.data;
     } catch (error) {
       // console.log("error from registerUser", error);

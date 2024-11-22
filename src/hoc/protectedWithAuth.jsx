@@ -1,12 +1,13 @@
+/* eslint-disable linebreak-style */
 "use client";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { logout, updateAccessToken } from "../features/userSlice";
-import { getValidAccessToken } from "../utils/getValidAccessToken";
+// import { logout, updateAccessToken } from "../features/userSlice";
+// import { getValidAccessToken } from "../utils/getValidAccessToken";
 import { CircularProgress } from "@mui/material";
-import { jwtDecode } from "jwt-decode";
+import { checkAuth } from "./checkAuth";
 
 /**
  * Higher-order component that protects a wrapped component with authentication.
@@ -28,63 +29,85 @@ export default function protectedWithAuth(WrappedComponent) {
     const isValidatedRef = useRef(false);
     const authInProgressRef = useRef(false);
 
-    const checkAuth = async () => {
-      // Prevent multiple calls
-      if (authInProgressRef.current) {
-        return;
-      }
-      authInProgressRef.current = true;
+    // export const checkAuth = async ({
+    //   user,
+    //   setLoading,
+    //   isValidatedRef,
+    //   authInProgressRef,
+    //   dispatch,
+    //   router,
+    // }) => {
+    //   console.log("checkAuth started");
+    //   // Prevent multiple calls
+    //   if (authInProgressRef.current) {
+    //     return;
+    //   }
+    //   authInProgressRef.current = true;
 
-      if (isValidatedRef.current) {
-        setLoading(false);
-        authInProgressRef.current = false;
-        return;
-      }
+    //   if (isValidatedRef.current) {
+    //     setLoading(false);
+    //     authInProgressRef.current = false;
+    //     return;
+    //   }
 
-      // Redirect to login if no user or access token
-      if (!user || !user.accessToken) {
-        setLoading(true);
-        authInProgressRef.current = false;
-        return router.replace("/login");
-      }
+    //   // Redirect to login if no user or access token
+    //   if (!user || !user.accessToken) {
+    //     setLoading(true);
+    //     authInProgressRef.current = false;
+    //     return router.replace("/login");
+    //   }
 
-      try {
-        // Decode the access token and check expiration
-        const decodedToken = jwtDecode(user.accessToken);
-        const currentTime = Math.floor(Date.now() / 1000);
+    //   try {
+    //     // Decode the access token and check expiration
+    //     const decodedToken = jwtDecode(user.accessToken);
+    //     const currentTime = Math.floor(Date.now() / 1000);
 
-        if (decodedToken.exp > currentTime) {
-          isValidatedRef.current = true;
-          setLoading(false);
-          authInProgressRef.current = false;
-          return;
-        }
+    //     if (decodedToken.exp > currentTime) {
+    //       isValidatedRef.current = true;
+    //       setLoading(false);
+    //       console.log("test2");
+    //       authInProgressRef.current = false;
+    //       return;
+    //     }
 
-        const accessToken = await getValidAccessToken();
+    //     const accessToken = await getValidAccessToken();
 
-        if (accessToken && accessToken !== user.accessToken) {
-          dispatch(updateAccessToken(accessToken));
-        }
+    //     console.log("Access token retrieved:", accessToken);
 
-        isValidatedRef.current = true;
-        setLoading(false);
-      } catch (error) {
-        dispatch(logout());
-        setLoading(true);
-        router.replace("/login");
-      } finally {
-        authInProgressRef.current = false;
-      }
-    };
+    //     if (accessToken && accessToken !== user.accessToken) {
+    //       dispatch(updateAccessToken(accessToken));
+    //     }
+
+    //     isValidatedRef.current = true;
+    //     setLoading(false);
+    //     console.log("setLoading called with false");
+    //   } catch (error) {
+    //     dispatch(logout());
+    //     setLoading(true);
+    //     router.replace("/login");
+    //   } finally {
+    //     authInProgressRef.current = false;
+    //   }
+    // };
 
     useEffect(() => {
-      checkAuth();
+      checkAuth({
+        user,
+        setLoading,
+        isValidatedRef,
+        authInProgressRef,
+        dispatch,
+        router,
+      });
     }, []);
 
     if (loading) {
       return (
         <div className="flex justify-center items-center h-screen dark:bg-dark_bg_1">
-          <CircularProgress style={{ color: "#ff5722" }} />
+          <CircularProgress
+            style={{ color: "#ff5722" }}
+            data-testid="loading-spinner"
+          />
         </div>
       );
     }
