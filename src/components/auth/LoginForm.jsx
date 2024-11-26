@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 "use client";
 
 import Link from "next/link";
@@ -12,6 +13,7 @@ import { loginUser } from "../../features/userSlice";
 import { useRouter } from "next/navigation";
 import PulseLoader from "react-spinners/PulseLoader";
 import { useEffect, useState } from "react";
+// import axios from "axios";
 
 export default function LoginForm() {
   const { status, error, user } = useSelector((state) => state.userState);
@@ -34,10 +36,14 @@ export default function LoginForm() {
 
   const onSubmit = async (dataForm) => {
     const resp = await dispatch(loginUser({ ...dataForm }));
-    console.log("resp:", resp);
+    // console.log("resp:", resp);
     if (resp.payload?.user) {
       router.push("/");
     }
+  };
+
+  const handleAuthGoogle = () => {
+    window.location.href = "http://localhost:8000/api/v1/auth/google";
   };
 
   return (
@@ -48,14 +54,16 @@ export default function LoginForm() {
 
           <div className="flex justify-center space-x-4 mt-4">
             <button
+              onClick={handleAuthGoogle}
               className="bg-red-500 text-white p-2 rounded-full w-[40px]"
-              aria-label="Sign in with Google"
+              aria-label="Google"
             >
               <i className="fab fa-google"></i>
             </button>
+
             <button
               className="bg-blue-600 text-white  p-2 rounded-full w-[40px]"
-              aria-label="Sign in with Facebook"
+              aria-label="Facebook"
             >
               <i className="fab fa-facebook-f"></i>
             </button>
@@ -116,3 +124,4 @@ export default function LoginForm() {
     </div>
   );
 }
+

@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 "use client";
 
 import { store } from "../store/store";
@@ -26,6 +27,7 @@ export const getValidAccessToken = async () => {
 
   try {
     // check if the access token is valid
+
     const response = await axios.get(`${AUTH_ENDPOINT}/validateAccessToken`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -61,6 +63,12 @@ export const getValidAccessToken = async () => {
     return accessToken;
   } catch (error) {
     // store.dispatch(logout());
+    if (
+      error.message === "Invalid access token" ||
+      error.message === "Failed to refresh access token"
+    ) {
+      throw new Error(error.message);
+    }
     throw new Error("Error during accessToken validation");
   }
 };

@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -15,11 +14,28 @@ import { jwtDecode } from "jwt-decode";
  */
 
 export async function middleware(req) {
+  console.log("middleware");
   const AUTH_ENDPOINT = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth`;
   const refreshToken = req.cookies.get("refresh_jwt")?.value;
+  const url = req.nextUrl.clone();
+  const isAuthPage = url.pathname === "/login" || url.pathname === "/register";
 
+  // if (!refreshToken) {
+  //   return NextResponse.redirect(new URL("/login", req.url));
+  // }
   if (!refreshToken) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    // Redirect unauthenticated users trying to access the home page
+    if (url.pathname === "/") {
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
+  if (refreshToken && isAuthPage) {
+    console.log("redirecting to /");
+    url.pathname = "/";
+    return NextResponse.redirect(url);
   }
 
   try {
@@ -52,5 +68,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: "/",
+  matcher: ["/", "/login", "/register"],
 };
