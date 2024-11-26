@@ -6,7 +6,22 @@ const catchAsync = require("../utils/catchAsync");
 const logger = require("../configs/logger");
 const AppError = require("../utils/appError");
 const tokenValidation = require("../services/tokenValidation");
+
 const { DEFAULT_PICTURE, DEFAULT_STATUS } = process.env;
+
+const generatePass = () => {
+  let password = "";
+  let str =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz0123456789@#$";
+
+  for (let i = 1; i <= 10; i++) {
+    let char = Math.floor(Math.random() * str.length + 1);
+
+    password += str.charAt(char);
+  }
+
+  return password;
+};
 
 const signToken = (id, secret, expireTime) => {
   return new Promise((resolve, reject) => {
@@ -194,6 +209,8 @@ exports.login = catchAsync(async (req, resp, next) => {
 
 exports.logout = (req, resp) => {
   resp.clearCookie("refresh_jwt", { path: "/" });
+  resp.clearCookie("auth_token", { path: "/" });
+  resp.clearCookie("access_token_form_Cb", { path: "/" });
   // resp.clearCookie("jwt", { path: "/api/v1/auth/refreshToken" });
 
   resp.status(200).json({
@@ -315,5 +332,54 @@ exports.validateAccessToken = catchAsync(async (req, resp, next) => {
     return resp
       .status(401)
       .json({ valid: false, expired: false, message: "Token is invalid" });
+  }
+});
+
+exports.findOrCreateUser_goolgeAuth = async (req, resp) => {
+  let user;
+  const profile = req.user;
+  const { email, name, picture } = profile._json;
+
+  user = await User.findOne({ email });
+
+  if (!user) {
+    const status = "";
+    const password = generatePass();
+    const confirmPassword = password;
+
+    user = await User.create({
+      name,
+      email,
+      password,
+      confirmPassword,
+      status: status || DEFAULT_STATUS,
+      picture: picture || DEFAULT_PICTURE,
+    });
+  }
+
+  const accessToken = await createSendAccessToken(user, resp);
+  const refreshToken = await createSendRefreshToken(user, resp);
+
+  if (!accessToken || !refreshToken) {
+    throw new Error("Something went very wrong!");
+  }
+
+  return {
+    accessToken,
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    status: user.status,
+    picture: user.picture,
+  };
+};
+
+exports.forgotPassword = catchAsync(async (req, resp, next) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return next(new AppError("No user found with this email address", 404));
   }
 });

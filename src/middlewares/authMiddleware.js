@@ -4,14 +4,15 @@ const tokenValidation = require("../services/tokenValidation");
 const User = require("../models/userModel");
 
 exports.protect = catchAsync(async (req, resp, next) => {
-  let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
-  // else if (req.cookies.jwt) {
+  const token = req.cookies.auth_token;
+  const accessToken = req.cookies.access_token_form_Cb;
+  // if (
+  //   req.headers.authorization &&
+  //   req.headers.authorization.startsWith("Bearer")
+  // ) {
+  //   token = req.headers.authorization.split(" ")[1];
+  // }
+  // if (req.cookies.jwt) {
   //   token = req.cookies.jwt;
   // }
 
@@ -31,17 +32,21 @@ exports.protect = catchAsync(async (req, resp, next) => {
   }
 
   // Check if user still exists
-  const user = await User.findById(decoded.id);
+  let user = await User.findById(decoded.id);
 
   if (!user) {
     return next(
       new AppError(
         "The user belonging to this token does no longer exist.",
-        401
+        404
       )
     );
   }
 
+  user = {
+    accessToken,
+    ...user._doc,
+  };
   // part to add LATER
   // Check if user changed password after the token was issued
 
