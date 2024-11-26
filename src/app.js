@@ -51,6 +51,12 @@ app.use(cors(corsOptions));
 // Pre-flight requests for all routes
 app.options("*", cors(corsOptions));
 
+//
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Max-Age", "86400"); // Cache preflight for 24 hours
+  next();
+});
+
 // app.get("/", (req, resp) => {
 //   //   logger.info("Hello World!");
 //   //   try {

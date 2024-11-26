@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 const logger = require("./configs/logger");
 const mongoose = require("mongoose");
+const redisClient = require("./configs/redisClient");
 
 // handling uncaught exceptions
 process.on("uncaughtException", (err) => {
