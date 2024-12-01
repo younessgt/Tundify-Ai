@@ -43,4 +43,9 @@ router.route("/me").get(authMiddleware.protect, (req, resp) => {
   });
 });
 
+router.route("/forgot-password").post(authController.forgotPassword);
+router.route("/validate-reset-token").get(authController.validateResetToken);
+router
+  .route("/new-password")
+  .post(authMiddleware.protect, authController.newPassword);
 module.exports = router;

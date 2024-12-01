@@ -4,8 +4,8 @@ const tokenValidation = require("../services/tokenValidation");
 const User = require("../models/userModel");
 
 exports.protect = catchAsync(async (req, resp, next) => {
-  const token = req.cookies.auth_token;
-  const accessToken = req.cookies.access_token_form_Cb;
+  const accessToken = req.cookies.access_token;
+  // const accessToken = req.cookies.access_token_form_Cb;
   // if (
   //   req.headers.authorization &&
   //   req.headers.authorization.startsWith("Bearer")
@@ -17,14 +17,15 @@ exports.protect = catchAsync(async (req, resp, next) => {
   // }
 
   // Check if token is available
-  if (!token) {
+  console.log("accessToken", accessToken);
+  if (!accessToken) {
     return next(
       new AppError("You are not logged in! Please log in to get access.", 401)
     );
   }
 
   // Verify token
-  const decoded = await tokenValidation(token, process.env.JWT_SECRET);
+  const decoded = await tokenValidation(accessToken, process.env.JWT_SECRET);
 
   if (!decoded) {
     // resp.clearCookie("jwt");

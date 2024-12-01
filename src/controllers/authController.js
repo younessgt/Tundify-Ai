@@ -6,8 +6,13 @@ const catchAsync = require("../utils/catchAsync");
 const logger = require("../configs/logger");
 const AppError = require("../utils/appError");
 const tokenValidation = require("../services/tokenValidation");
+const crypto = require("crypto");
+const redisClient = require("../configs/redisClient");
+const Email = require("../services/email");
+const path = require("path");
 
 const { DEFAULT_PICTURE, DEFAULT_STATUS } = process.env;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 const generatePass = () => {
   let password = "";
@@ -74,7 +79,7 @@ const createSendRefreshToken = async (user, resp) => {
     );
     const cookieOptions = {
       // maxAge: process.env.REFRESH_JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
-      maxAge: process.env.REFRESH_JWT_COOKIE_EXPIRES_IN * 60 * 1000,
+      maxAge: process.env.REFRESH_JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
 
       httpOnly: true,
       path: "/",
@@ -100,6 +105,16 @@ const createSendRefreshToken = async (user, resp) => {
   //       user,
   //     },
   //   });
+};
+
+const createPasswordResetToken = () => {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  console.log("resetToken", resetToken);
+  const resetTokenHash = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  return { resetTokenHash, resetToken };
 };
 
 exports.validateRegister = catchAsync(async (req, resp, next) => {
@@ -209,8 +224,8 @@ exports.login = catchAsync(async (req, resp, next) => {
 
 exports.logout = (req, resp) => {
   resp.clearCookie("refresh_jwt", { path: "/" });
-  resp.clearCookie("auth_token", { path: "/" });
-  resp.clearCookie("access_token_form_Cb", { path: "/" });
+  resp.clearCookie("access_token", { path: "/" });
+  // resp.clearCookie("access_token_form_Cb", { path: "/" });
   // resp.clearCookie("jwt", { path: "/api/v1/auth/refreshToken" });
 
   resp.status(200).json({
@@ -377,9 +392,111 @@ exports.findOrCreateUser_goolgeAuth = async (req, resp) => {
 exports.forgotPassword = catchAsync(async (req, resp, next) => {
   const { email } = req.body;
 
+  // Check if user exists
   const user = await User.findOne({ email });
 
   if (!user) {
     return next(new AppError("No user found with this email address", 404));
   }
+
+  console.log("user", user._id);
+  const userIdKey = `resetToken:${user._id.toString()}`;
+
+  // Check if there is already a reset token in the database
+  const existingToken = await redisClient.get(userIdKey);
+  console.log("existingToken", existingToken);
+
+  if (existingToken) {
+    return next(
+      new AppError(
+        "Email already sent, please check your email or you can retry in 6 minute.",
+        429
+      )
+    );
+  }
+
+  // Generate the random reset token
+  const { resetTokenHash, resetToken } = createPasswordResetToken();
+  // console.log("resetTokenHash", resetTokenHash);
+  const tokenKey = `resetToken:${resetTokenHash}`;
+
+  // Save the reset token and expiry time in the database
+  await redisClient.setex(userIdKey, 360, resetTokenHash);
+  await redisClient.setex(tokenKey, 360, user._id.toString());
+
+  const resetPasswordLink = `http://localhost:8000/api/v1/auth/validate-reset-token?token=${resetToken}`;
+
+  // Send the reset token to the user's email
+  await new Email(user, resetPasswordLink).sendPasswordReset();
+
+  resp.status(200).json({
+    status: "success",
+    message: "Password reset token sent to email",
+  });
+});
+
+exports.validateResetToken = catchAsync(async (req, resp, next) => {
+  const { token } = req.query;
+
+  if (!token) {
+    // return next(new AppError("Token is invalid", 400));
+    resp.redirect(`${FRONTEND_URL}/invalid-expired-url`);
+  }
+
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+  const userId = await redisClient.get(`resetToken:${tokenHash}`);
+
+  if (!userId) {
+    // return next(new AppError("Invalid or expired token", 400));
+    resp.redirect(`${FRONTEND_URL}/invalid-expired-url`);
+  }
+
+  const newToken = await signToken(
+    userId,
+    process.env.JWT_SECRET,
+    process.env.JWT_EXPIRES_IN
+  );
+
+  resp.cookie("access_token", newToken, {
+    maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 60 * 1000,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  });
+
+  resp.redirect(`${FRONTEND_URL}/new-password`);
+});
+
+// function to reset password
+exports.newPassword = catchAsync(async (req, resp, next) => {
+  const { email } = req.user;
+  const { newPassword, confirmPassword } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+
+  user.password = newPassword;
+  user.confirmPassword = confirmPassword;
+
+  await user.save();
+
+  // Delete the reset token from the database
+  const userIdKey = `resetToken:${user._id.toString()}`;
+  const resetTokenHash = await redisClient.get(userIdKey);
+
+  if (resetTokenHash) {
+    const tokenKey = `resetToken:${resetTokenHash}`;
+    await redisClient.del(userIdKey);
+
+    await redisClient.del(tokenKey);
+  }
+  resp.clearCookie("access_token", { path: "/" });
+
+  resp.status(200).json({
+    status: "success",
+    message: "Password reset successfully",
+  });
 });

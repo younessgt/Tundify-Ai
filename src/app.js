@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
@@ -12,6 +13,8 @@ const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/appError");
 
 const app = express();
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 app.use(cookieParser());
 // HTTP request logger middleware for node.js
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
