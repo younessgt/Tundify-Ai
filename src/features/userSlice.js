@@ -15,6 +15,7 @@ const initialState = {
     picture: "",
     accessToken: "",
   },
+  resetCheckAccess: false,
 };
 
 // Create an asynchronous thunk action for user registration.
@@ -64,6 +65,42 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+
+  async (values, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${AUTH_ENDPOINT}/forgot-password`, {
+        ...values,
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const newPassword = createAsyncThunk(
+  "auth/newPassword",
+  async (values, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${AUTH_ENDPOINT}/new-password`,
+        {
+          ...values,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 export const userSlice = createSlice({
   name: "userState",
 
@@ -96,6 +133,13 @@ export const userSlice = createSlice({
       state.user = action.payload;
       state.status = "success";
     },
+
+    setResetCheckAccess: (state) => {
+      state.resetCheckAccess = true;
+    },
+    resetError(state) {
+      state.error = "";
+    },
   },
 
   extraReducers: (builder) => {
@@ -104,37 +148,58 @@ export const userSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.status = "loading";
       })
-
       .addCase(registerUser.fulfilled, (state, action) => {
         state.status = "successRegister";
 
         state.user = action.payload.user;
       })
-
       .addCase(registerUser.rejected, (state, action) => {
         state.status = "failed";
 
         state.error = action.payload.message;
       })
-
       .addCase(loginUser.pending, (state) => {
         state.status = "loading";
       })
-
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = "successLogin";
 
         state.user = action.payload.user;
       })
-
       .addCase(loginUser.rejected, (state, action) => {
         state.status = "failed";
 
         state.error = action.payload.message;
+      })
+      .addCase(forgotPassword.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.status = "successSendEmail";
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.status = "failedSendEmail";
+
+        state.error = action.payload.message;
+      })
+      .addCase(newPassword.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(newPassword.fulfilled, (state) => {
+        state.status = "successResetPassword";
+      })
+      .addCase(newPassword.rejected, (state) => {
+        state.status = "failedResetPassword";
       });
   },
 });
 
-export const { logout, updateAccessToken, updateUser } = userSlice.actions;
+export const {
+  logout,
+  updateAccessToken,
+  updateUser,
+  setResetCheckAccess,
+  resetError,
+} = userSlice.actions;
 
 export default userSlice.reducer;

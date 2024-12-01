@@ -9,7 +9,7 @@ import RegisterInput from "./RegisterInput";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { loginUser } from "../../features/userSlice";
+import { loginUser, resetError } from "../../features/userSlice";
 import { useRouter } from "next/navigation";
 import PulseLoader from "react-spinners/PulseLoader";
 import { useEffect, useState } from "react";
@@ -17,9 +17,12 @@ import { useEffect, useState } from "react";
 
 export default function LoginForm() {
   const { status, error, user } = useSelector((state) => state.userState);
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    dispatch(resetError());
     setMounted(true);
   }, []);
 
@@ -30,9 +33,6 @@ export default function LoginForm() {
   } = useForm({
     resolver: yupResolver(loginSchema),
   });
-
-  const dispatch = useDispatch();
-  const router = useRouter();
 
   const onSubmit = async (dataForm) => {
     const resp = await dispatch(loginUser({ ...dataForm }));
@@ -124,4 +124,3 @@ export default function LoginForm() {
     </div>
   );
 }
-

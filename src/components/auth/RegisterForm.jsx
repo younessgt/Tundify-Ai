@@ -8,7 +8,7 @@ import PulseLoader from "react-spinners/PulseLoader";
 import Link from "next/link";
 import { signUpSchema } from "../../utils/validation";
 import RegisterInput from "./RegisterInput";
-import { registerUser } from "../../features/userSlice";
+import { registerUser, resetError } from "../../features/userSlice";
 import { useRouter } from "next/navigation";
 import Picture from "./Picture";
 import axios from "axios";
@@ -28,6 +28,7 @@ export default function RegisterForm() {
 
   useEffect(() => {
     // Setting mounted to true after the component is rendered
+    dispatch(resetError());
     setMounted(true);
   }, []);
 
@@ -84,7 +85,7 @@ export default function RegisterForm() {
     // If the data is valid, we can move  forward with the registration process
     try {
       await validateRegistration(dataForm);
-      console.log("tr");
+
     } catch (error) {
       console.log("Error Coming From registartion validation : ", error);
       return;
