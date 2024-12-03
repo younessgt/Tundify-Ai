@@ -4,17 +4,17 @@ const tokenValidation = require("../services/tokenValidation");
 const User = require("../models/userModel");
 
 exports.protect = catchAsync(async (req, resp, next) => {
-  const accessToken = req.cookies.access_token;
+  let accessToken;
   // const accessToken = req.cookies.access_token_form_Cb;
-  // if (
-  //   req.headers.authorization &&
-  //   req.headers.authorization.startsWith("Bearer")
-  // ) {
-  //   token = req.headers.authorization.split(" ")[1];
-  // }
-  // if (req.cookies.jwt) {
-  //   token = req.cookies.jwt;
-  // }
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    accessToken = req.headers.authorization.split(" ")[1];
+  }
+  if (req.cookies.jwt) {
+    accessToken = req.cookies.access_token;
+  }
 
   // Check if token is available
   console.log("accessToken", accessToken);
