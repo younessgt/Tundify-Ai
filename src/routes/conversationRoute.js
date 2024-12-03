@@ -9,5 +9,6 @@ router.use(trimRequest.all);
 router.use(authMiddleware.protect);
 
 router.route("/").post(conversationController.createOrOpenConversation);
+router.route("/").get(conversationController.getConversations);
 
 module.exports = router;

@@ -56,3 +56,28 @@ exports.populateConversation = async (id, fieldToPopulate, fieldToRemove) => {
   }
   return populatedConversation;
 };
+
+exports.getUserConversations = async (userId) => {
+  if (!userId) {
+    throw new Error("Please provide a userId");
+  }
+
+  let conversations = await Conversation.find({
+    users: { $elemMatch: { $eq: userId } },
+  })
+    .populate("users", "-password")
+    .populate("admin")
+    .populate("latestMessage")
+    .sort({ updatedAt: -1 });
+
+  if (!conversations) {
+    throw new AppError("No conversation found", 400);
+  }
+
+  conversations = await User.populate(conversations, {
+    path: "latestMessage.sender",
+    select: "name email picture status",
+  });
+
+  return conversations;
+};

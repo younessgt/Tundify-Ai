@@ -6,6 +6,7 @@ const {
   checkIfConversationExist,
   createConversation,
   populateConversation,
+  getUserConversations,
 } = require("../services/conversation");
 const { findUserById } = require("../services/userActions");
 
@@ -66,4 +67,16 @@ exports.createOrOpenConversation = catchAsync(async (req, resp, next) => {
   } else {
     console.log("this is for group part");
   }
+});
+
+exports.getConversations = catchAsync(async (req, resp, next) => {
+  const userId = req.user._id;
+
+  const conversations = await getUserConversations(userId);
+
+  resp.status(200).json({
+    status: "success",
+    count: conversations.length,
+    allConversations: conversations,
+  });
 });
