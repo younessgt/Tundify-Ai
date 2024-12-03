@@ -81,3 +81,24 @@ exports.getUserConversations = async (userId) => {
 
   return conversations;
 };
+
+exports.updateLatestMessage = async (conversationId, msg) => {
+  if (!conversationId || !msg) {
+    throw new AppError("please provide  conversation id and  message");
+  }
+
+  const updatedConversation = await Conversation.findByIdAndUpdate(
+    conversationId,
+    {
+      latestMessage: msg._id,
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!updatedConversation) {
+    throw new AppError("Failed to updated the conversation", 400);
+  }
+  return updatedConversation;
+};

@@ -40,6 +40,17 @@ const handleDuplicateFieldsDB = (err) => {
   // console.log(err.errmsg);
   return new AppError(message, 400);
 };
+const handleCastErrorDB = (err) => {
+  const message = `Invalid ${err.path}: ${err.value}`;
+  // now we should make the error operational for that we will use the AppError class
+
+  return new AppError(message, 400);
+};
+
+const handleValidationErrorDB = (err) => {
+  const { message } = err;
+  return new AppError(message, 400);
+};
 // error handler middleware
 module.exports = (err, req, resp, next) => {
   err.statusCode = err.statusCode || 500;
@@ -56,6 +67,10 @@ module.exports = (err, req, resp, next) => {
     if (err.name === "TokenExpiredError") error = handleJWTExpireError();
     if (err.code === 11000) {
       error = handleDuplicateFieldsDB(err);
+    }
+    if (err.name === "CastError") error = handleCastErrorDB(err);
+    if (err.name === "ValidationError") {
+      error = handleValidationErrorDB(err);
     }
     sendErrorProd(error, req, resp);
   }

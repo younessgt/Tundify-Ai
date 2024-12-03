@@ -5,6 +5,7 @@ const messageSchema = new mongoose.Schema(
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: [true, "Message must belong to a user"],
     },
 
     message: {
@@ -15,6 +16,7 @@ const messageSchema = new mongoose.Schema(
     conversation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Conversation",
+      required: [true, "Message must belong to a conversation"],
     },
     files: [],
   },
