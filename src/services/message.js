@@ -39,3 +39,21 @@ exports.populateMessage = async (messageId) => {
 
   return populatedMessage;
 };
+
+exports.getMessages = async (conversation_id) => {
+  if (!conversation_id) {
+    throw new AppError("Please provide a conversation Id", 400);
+  }
+
+  const messages = await Message.find({
+    conversation: conversation_id,
+  })
+    .populate("sender", "name picture email status")
+    .populate("conversation");
+
+  if (!messages) {
+    throw new AppError("No Messages Found", 400);
+  }
+
+  return messages;
+};

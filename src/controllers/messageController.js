@@ -1,7 +1,11 @@
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const { updateLatestMessage } = require("../services/conversation");
-const { createMessage, populateMessage } = require("../services/message");
+const {
+  createMessage,
+  populateMessage,
+  getMessages,
+} = require("../services/message");
 
 exports.sendMessage = catchAsync(async (req, resp, next) => {
   const senderId = req.user._id;
@@ -27,5 +31,20 @@ exports.sendMessage = catchAsync(async (req, resp, next) => {
   resp.status(200).json({
     status: "success",
     message: populatedMessage,
+  });
+});
+
+exports.getMessages = catchAsync(async (req, resp, next) => {
+  const { conversation_id } = req.params;
+  console.log(conversation_id);
+  if (!conversation_id) {
+    return next(new AppError("Please Provide a conversation Id"));
+  }
+
+  const messages = await getMessages(conversation_id);
+
+  resp.status(200).json({
+    status: "success",
+    messages,
   });
 });
