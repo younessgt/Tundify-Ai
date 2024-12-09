@@ -16,6 +16,7 @@ module.exports = {
         dark_bg_4: "#222E35",
         dark_bg_5: "#233138",
         dark_bg_6: "#101A20",
+        dark_bg_7: "#3e5b6b",
         dark_text_1: "#E9EDEF",
         dark_text_2: "#8696A0",
         dark_text_3: "#8696a0",
@@ -24,6 +25,10 @@ module.exports = {
         dark_hover_1: "#2A3942",
         dark_btn_1: "#ff5722",
         dark_btn_2: "#CC461B",
+      },
+      screens: {
+        "max-1826": { max: "1826px" },
+        "max-1400": { max: "1400px" },
       },
     },
   },
