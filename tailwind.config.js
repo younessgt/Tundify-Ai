@@ -17,6 +17,7 @@ module.exports = {
         dark_bg_5: "#233138",
         dark_bg_6: "#101A20",
         dark_bg_7: "#3e5b6b",
+        dark_bg_8: "#324a57",
         dark_text_1: "#E9EDEF",
         dark_text_2: "#8696A0",
         dark_text_3: "#8696a0",

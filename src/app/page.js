@@ -5,23 +5,29 @@
 import { logout } from "../features/userSlice";
 // import { CallIcon, ChatIcon } from "../components/svg";
 import protectedWithAuth from "../hoc/protectedWithAuth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import SideBar from "@/components/home/SideBar";
-import Conversations from "@/components/home/Conversations";
+import SideBar from "@/components/home/sideBar/SideBar";
+import Conversations from "@/components/home/Conversation/Conversations";
 import { useState, useEffect } from "react";
-// import { motion } from "framer-motion";
-import { motion, AnimatePresence } from "framer-motion";
 
-function Home({ user }) {
+import { motion } from "framer-motion";
+import { getConversations } from "../features/chatSlice";
+
+function Home() {
   const [isDiv4Open, setIsDiv4Open] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1400);
   const [hasMounted, setHasMounted] = useState(false);
+  const dispatch = useDispatch();
 
   const [selectedMenu, setSelectedMenu] = useState("chat");
+  const { user } = useSelector((state) => state.userState);
 
   useEffect(() => {
+    if (user?.accessToken) {
+      dispatch(getConversations(user.accessToken));
+    }
     const handleResize = () => setIsSmallScreen(window.innerWidth < 1400);
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -65,7 +71,7 @@ function Home({ user }) {
                 />
 
                 {/* changebale content */}
-                <div className="bg-blue-500 w-[450px] flex-shrink-0">
+                <div className="bg-dark_bg_8 w-[450px] flex-shrink-0">
                   {renderContent()}
                 </div>
 
