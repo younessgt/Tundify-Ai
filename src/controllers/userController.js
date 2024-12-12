@@ -11,6 +11,15 @@ exports.searchUser = catchAsync(async (req, resp, next) => {
 
   const users = await findUserByNameOrEmail(searchInput);
 
+  if (req.user) {
+    return resp.status(200).json({
+      status: "success",
+      length: users.length,
+      users,
+      accessToken: req.user.accessToken,
+    });
+  }
+
   resp.status(200).json({
     status: "success",
     length: users.length,

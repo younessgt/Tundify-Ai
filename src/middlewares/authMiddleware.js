@@ -2,6 +2,28 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const tokenValidation = require("../services/tokenValidation");
 const User = require("../models/userModel");
+const jwtHelper = require("../utils/jwtHelper");
+
+const handleExpiredAccessToken = async (userId, req, resp, next) => {
+  try {
+    // Fetch user from the database
+    const user = await User.findById(userId);
+
+    if (!user) return next(new AppError("The user no longer exists.", 401));
+
+    // Create a new access token
+    const newAccessToken = await jwtHelper.createSendAccessToken(user, resp);
+
+    // Attach user and new access token to the request
+    req.user = { ...user.toObject(), accessToken: newAccessToken };
+
+    return next();
+  } catch (error) {
+    return next(
+      new AppError("Failed to refresh access token. Log in again!", 401)
+    );
+  }
+};
 
 exports.protect = catchAsync(async (req, resp, next) => {
   let accessToken;
@@ -17,7 +39,6 @@ exports.protect = catchAsync(async (req, resp, next) => {
   }
 
   // Check if token is available
-  console.log("accessToken", accessToken);
   if (!accessToken) {
     return next(
       new AppError("You are not logged in! Please log in to get access.", 401)
@@ -54,4 +75,53 @@ exports.protect = catchAsync(async (req, resp, next) => {
   // Grant access to protected route
   req.user = user;
   next();
+});
+
+exports.protectWithRenewAccessToken = catchAsync(async (req, resp, next) => {
+  const { refresh_jwt } = req.cookies;
+  let accessToken;
+
+  console.log("refresh_jwt", refresh_jwt);
+
+  // Check if token is available
+  if (!refresh_jwt) {
+    return next(
+      new AppError("You are not logged in! Please log in to get access", 401)
+    );
+  }
+
+  const decodedRefresh = await tokenValidation(
+    refresh_jwt,
+    process.env.REFRESH_JWT_SECRET
+  );
+
+  if (!decodedRefresh) {
+    return next(new AppError("Invalid token. Please log in again!", 401));
+  }
+
+  // Check if access_Token is available
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    accessToken = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!accessToken) {
+    return next(
+      new AppError("You are not logged in! Please log in to get access.", 401)
+    );
+  }
+
+  // Verify token
+  try {
+    const decoded = await tokenValidation(accessToken, process.env.JWT_SECRET);
+    // req.user = decoded;
+    return next();
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return handleExpiredAccessToken(decodedRefresh.id, req, resp, next);
+    }
+    return next(new AppError("Invalid token. Please log in again!", 401));
+  }
 });
