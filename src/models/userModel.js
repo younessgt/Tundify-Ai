@@ -66,6 +66,11 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// To improve the search functionality in the application,
+// we use indexes on the name and email fields of the userSchema
+// This will help in faster search queries.
+userSchema.index({ name: 1, email: 1 });
+
 // Encrypt password before saving
 userSchema.pre("save", async function (next) {
   // Only run this function if password was actually modified

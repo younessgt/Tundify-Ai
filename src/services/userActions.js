@@ -19,3 +19,11 @@ exports.findUserById = async (id) => {
     picture: user.picture,
   };
 };
+
+exports.findUserByNameOrEmail = async (keyword) => {
+  const users = await User.find({
+    $or: [{ name: { $regex: keyword, $options: "i" } }, { email: keyword }],
+  });
+
+  return users;
+};
