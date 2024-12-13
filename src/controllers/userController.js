@@ -9,9 +9,9 @@ exports.searchUser = catchAsync(async (req, resp, next) => {
     next(new AppError("Please provide a search keyword", 400));
   }
 
-  const users = await findUserByNameOrEmail(searchInput);
+  const users = await findUserByNameOrEmail(searchInput, req.user._id);
 
-  if (req.user) {
+  if (req.user.accessToken) {
     return resp.status(200).json({
       status: "success",
       length: users.length,

@@ -115,7 +115,11 @@ exports.protectWithRenewAccessToken = catchAsync(async (req, resp, next) => {
 
   // Verify token
   try {
+    let user;
     const decoded = await tokenValidation(accessToken, process.env.JWT_SECRET);
+    req.user = {
+      _id: decoded.id,
+    };
     // req.user = decoded;
     return next();
   } catch (error) {
