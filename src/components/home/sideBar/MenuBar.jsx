@@ -83,7 +83,7 @@ export default function MenuBar({ onMenuSelect, selectedMenu }) {
         <div className="transform transition-transform duration-200 hover:scale-125">
           {icon}
         </div>
-        <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-4 invisible group-hover:visible transition-opacity duration-200 bg-dark_bg_2 text-white px-3 py-1  rounded-2xl text-xs">
+        <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-4 invisible group-hover:visible transition-opacity duration-200 bg-white dark:text-dark_bg_3 px-3 py-1  rounded-2xl text-sm z-50">
           {label}
         </div>
       </div>

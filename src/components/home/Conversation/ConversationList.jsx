@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 import Conversation from "./Conversation";
 
-export default function ConversationList() {
+export default function ConversationList({ searchValue }) {
   const { conversations } = useSelector((state) => state.chatState);
   const [loading, setLoading] = useState(true);
 
@@ -26,10 +26,15 @@ export default function ConversationList() {
   }
   return (
     <div className="w-full h-full  overflow-y-scroll custom-scrollbar">
-      {conversations &&
+      {conversations && searchValue === "" ? (
         conversations.map((convo) => (
           <Conversation convo={convo} key={convo._id} />
-        ))}
+        ))
+      ) : (
+        <div className="w-full h-full  overflow-y-scroll custom-scrollbar flex justify-center items-center">
+          No results found
+        </div>
+      )}
     </div>
   );
 }
