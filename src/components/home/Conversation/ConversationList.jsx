@@ -2,13 +2,18 @@
 import { useEffect, useState } from "react";
 
 import { CircularProgress } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import Conversation from "./Conversation";
 
 export default function ConversationList({ searchValue }) {
   const { conversations } = useSelector((state) => state.chatState);
   const [loading, setLoading] = useState(true);
+  // const [activeConvoId, setActiveConvoId] = useState(null);
+
+  // const handleConversationClick = (convoId) => {
+  //   setActiveConvoId(convoId);
+  // };
 
   useEffect(() => {
     setLoading(false);
@@ -28,7 +33,11 @@ export default function ConversationList({ searchValue }) {
     <div className="w-full h-full  overflow-y-scroll custom-scrollbar">
       {conversations && searchValue === "" ? (
         conversations.map((convo) => (
-          <Conversation convo={convo} key={convo._id} />
+          <Conversation
+            convo={convo}
+            key={convo._id}
+            // onClick={() => handleConversationClick(convo._id)}
+          />
         ))
       ) : (
         <div className="w-full h-full  overflow-y-scroll custom-scrollbar flex justify-center items-center">

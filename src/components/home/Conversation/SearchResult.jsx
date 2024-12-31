@@ -28,7 +28,7 @@ export default function SearchResult({ searchResult }) {
       </div>
       {searchResult &&
         searchResult.map((user) => (
-          <UserSearchResult user={user} key={user._id} />
+          <UserSearchResult newContact={user} key={user._id} />
         ))}
     </div>
   );

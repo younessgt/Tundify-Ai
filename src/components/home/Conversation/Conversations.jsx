@@ -18,8 +18,7 @@ export default function Conversations() {
   useEffect(() => {
     const handleOutsideClick = (e) => {
       // Check if the click is outside the menuRef
-      console.log(menuRef.current);
-      console.log(e.target);
+
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setShowMenu(false); // Close the menu
       }

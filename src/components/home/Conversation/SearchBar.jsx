@@ -52,7 +52,7 @@ export default function SearchBar({ setSearchResult, setSearchValue }) {
           // console.log("updating access token");
           dispatch(updateAccessToken(response.data.accessToken));
         }
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
         if (error.status === 401) {
           // console.log("error 401");

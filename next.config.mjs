@@ -3,6 +3,7 @@ const nextConfig = {
   experimental: {
     forceSwcTransforms: true,
   },
+  reactStrictMode: false,
 };
 
 export default nextConfig;

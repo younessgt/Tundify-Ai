@@ -10,10 +10,11 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import SideBar from "@/components/home/sideBar/SideBar";
 import Conversations from "@/components/home/Conversation/Conversations";
-import { useState, useEffect } from "react";
-
+import { useState, useEffect, act } from "react";
 import { motion } from "framer-motion";
 import { getConversations } from "../features/chatSlice";
+import WelcomePage from "@/components/home/chat/WelcomePage";
+import Chat from "@/components/home/chat/Chat";
 
 function Home() {
   const [isDiv4Open, setIsDiv4Open] = useState(false);
@@ -23,6 +24,7 @@ function Home() {
 
   const [selectedMenu, setSelectedMenu] = useState("chat");
   const { user } = useSelector((state) => state.userState);
+  const { activeConversation } = useSelector((state) => state.chatState);
 
   useEffect(() => {
     if (user?.accessToken) {
@@ -78,7 +80,7 @@ function Home() {
                 {/* chat side */}
                 <motion.div
                   className={
-                    "bg-green-500 h-full flex items-center justify-center"
+                    "dark:bg-dark_bg_2 h-full flex items-center justify-center"
                   }
                   initial={{ flex: 1 }}
                   animate={{
@@ -91,12 +93,14 @@ function Home() {
                     display: isDiv4Open && isSmallScreen ? "none" : "flex",
                   }}
                 >
-                  <button
+                  {/* <button
                     onClick={() => setIsDiv4Open(true)}
                     className="bg-white text-green-500 px-4 py-2 rounded shadow"
                   >
                     Open Div 4
-                  </button>
+                  </button> */}
+
+                  {activeConversation?._id ? <Chat /> : <WelcomePage />}
                 </motion.div>
 
                 {/* info of the user that im chating with  */}
