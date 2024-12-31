@@ -29,7 +29,7 @@ export default function Message({
           <div
             className={`relative dark:text-dark_text_1 pl-2 py-2  rounded-xl shadow-lg ${
               senderIsMe
-                ? "dark:bg-dark_text_2 pr-[60px]"
+                ? "dark:bg-dark_bg_7 pr-[60px]"
                 : "dark:bg-dark_btn_1 pr-[45px]"
             }`}
           >
@@ -49,7 +49,7 @@ export default function Message({
             <div
               className={`absolute  ${
                 senderIsMe
-                  ? "dark:bg-dark_text_2 bottom-0 -right-3 w-6 h-3"
+                  ? "dark:bg-dark_bg_7 bottom-0 -right-3 w-6 h-3"
                   : "dark:bg-dark_btn_1 bottom-0 -left-3 w-6 h-3"
               }`}
             ></div>

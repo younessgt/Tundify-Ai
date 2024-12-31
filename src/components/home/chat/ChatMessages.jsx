@@ -9,7 +9,7 @@ export default function ChatMessages() {
 
   console.log("messages", messages);
   return (
-    <div className="flex flex-col overflow-y-auto custom-scrollbar overflow-x-hidden border-2 w-full py-2 px-[6%] h-full">
+    <div className="flex flex-col overflow-y-auto custom-scrollbar overflow-x-hidden  w-full py-2 px-[6%] h-full">
       {messages &&
         messages.map((message, index) => {
           const currentDate = formatDate(message.createdAt);
@@ -31,12 +31,6 @@ export default function ChatMessages() {
               />
             </React.Fragment>
           );
-
-          // <Message
-          //   message={message}
-          //   key={message._id}
-          //   senderIsMe={user._id === message.sender._id}
-          // />;
         })}
     </div>
   );

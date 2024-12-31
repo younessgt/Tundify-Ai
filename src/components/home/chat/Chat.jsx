@@ -5,6 +5,7 @@ import ChatMessages from "./ChatMessages";
 import { useEffect } from "react";
 import { getConversationMessages } from "@/features/chatSlice";
 import { CircularProgress } from "@mui/material";
+import ChatActions from "./ChatActions";
 
 export default function Chat() {
   const dispatch = useDispatch();
@@ -52,7 +53,7 @@ export default function Chat() {
         )}
       </div>
       <div className="h-[60px] w-full flex items-center dark:bg-dark_bg_3 border-t dark:border-t-dark_border_2">
-        input
+        <ChatActions />
       </div>
     </div>
   );
