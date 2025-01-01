@@ -1,4 +1,6 @@
 import AttachementPicker from "./actions/AttachementPicker";
+import MessageInput from "./actions/MessageInput";
+import VoiceRecorder from "./actions/VoiceRecorder";
 
 export default function ChatActions() {
   return (
@@ -6,6 +8,8 @@ export default function ChatActions() {
       {/*Attachement Picker*/}
 
       <AttachementPicker />
+      <MessageInput />
+      <VoiceRecorder />
     </div>
   );
 }
