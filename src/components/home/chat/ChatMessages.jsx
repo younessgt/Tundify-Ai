@@ -2,12 +2,20 @@ import { useSelector } from "react-redux";
 import Message from "./Message";
 import React from "react";
 import { formatDate } from "@/utils/dateConverter";
+import { useRef, useEffect } from "react";
 
 export default function ChatMessages() {
   const { messages } = useSelector((state) => state.chatState);
   const { user } = useSelector((state) => state.userState);
+  const messagesEndRef = useRef(null);
 
-  console.log("messages", messages);
+  // Auto scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   return (
     <div className="flex flex-col overflow-y-auto custom-scrollbar overflow-x-hidden  w-full py-2 px-[6%] h-full">
       {messages &&
@@ -32,6 +40,7 @@ export default function ChatMessages() {
             </React.Fragment>
           );
         })}
+      <div ref={messagesEndRef} />
     </div>
   );
 }

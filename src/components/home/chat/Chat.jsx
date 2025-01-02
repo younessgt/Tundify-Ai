@@ -40,9 +40,9 @@ export default function Chat() {
       <div className="w-full h-[60px] flex  items-center  dark:bg-dark_bg_3 border-b dark:border-b-dark_border_2">
         <ChatHeader />
       </div>
-      <div className="flex flex-grow justify-center items-center">
-        {status !== "succeeded" && status !== "failed" ? (
-          <div className="flex justify-center items-center ">
+      <div className="flex-grow flex flex-col min-h-0">
+        {/* {status !== "succeeded" && status !== "failed" ? (
+          <div className="flex flex-col h-full justify-center items-center ">
             <CircularProgress
               style={{ color: "#ff5722" }}
               data-testid="loading-spinner"
@@ -50,7 +50,8 @@ export default function Chat() {
           </div>
         ) : (
           <ChatMessages />
-        )}
+        )} */}
+        <ChatMessages />
       </div>
       <div className="h-[60px] w-full flex items-center dark:bg-dark_bg_3 border-t dark:border-t-dark_border_2">
         <ChatActions />

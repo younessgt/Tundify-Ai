@@ -9,11 +9,6 @@ import Conversation from "./Conversation";
 export default function ConversationList({ searchValue }) {
   const { conversations } = useSelector((state) => state.chatState);
   const [loading, setLoading] = useState(true);
-  // const [activeConvoId, setActiveConvoId] = useState(null);
-
-  // const handleConversationClick = (convoId) => {
-  //   setActiveConvoId(convoId);
-  // };
 
   useEffect(() => {
     setLoading(false);

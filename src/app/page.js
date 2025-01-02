@@ -10,7 +10,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import SideBar from "@/components/home/sideBar/SideBar";
 import Conversations from "@/components/home/Conversation/Conversations";
-import { useState, useEffect, act } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getConversations } from "../features/chatSlice";
 import WelcomePage from "@/components/home/chat/WelcomePage";
