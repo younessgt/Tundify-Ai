@@ -149,8 +149,20 @@ export const chatSlice = createSlice({
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
         // console.log("API Response for conversations:", action.payload);
+
         state.status = "succeeded";
         state.messages = [...state.messages, action.payload.message];
+        let conversation = {
+          ...action.payload.message.conversation,
+          latestMessage: action.payload.message,
+        };
+
+        let newConversations = [...state.conversations].filter(
+          (convo) => convo._id !== conversation._id
+        );
+
+        newConversations.unshift(conversation);
+        state.conversations = newConversations;
       })
       .addCase(sendMessage.rejected, (state, action) => {
         state.status = "failed";

@@ -24,6 +24,8 @@ export default function ConversationList({ searchValue }) {
       </div>
     );
   }
+
+  // console.log(conversations);
   return (
     <div className="w-full h-full  overflow-y-scroll custom-scrollbar">
       {conversations && searchValue === "" ? (

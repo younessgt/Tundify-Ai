@@ -13,10 +13,12 @@ export default function Conversation({ convo }) {
   // const [activeConvoId, setActiveConvoId] = useState(null);
 
   let latestMessage = "";
+
   let openConversation = null;
 
   if (convo) {
     latestMessage = convo.latestMessage?.message;
+
     if (latestMessage?.length > 47) {
       latestMessage = latestMessage.slice(0, 47) + "...";
     }

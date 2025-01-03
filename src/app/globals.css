@@ -39,5 +39,73 @@ body {
     border-radius: 10px;
     border: 2px solid #f0f0f0;
   }
+
+  .openEmojiAnimation {
+    animation: openAn 0.1s forwards;
+  }
+  @keyframes openAn {
+    0% {
+      transform: translateY(60px);
+    }
+  }
+
+  .custom-emoji-picker {
+    background: #111b21 !important;
+    width: 309% !important;
+
+    .epr-dark-theme {
+      background: #0b212e !important;
+
+      width: 100% !important;
+    }
+
+    .epr-search-container input {
+      background-color: #3e5b6b !important;
+      color: #ffffff !important;
+      /* or any color you want */
+    }
+
+    .epr-emoji-category-label {
+      /* background: #3e5b6b !important; */
+      background: transparent !important;
+    }
+
+    .epr-dark-theme {
+      background: #0b212e !important;
+
+      width: 100% !important;
+    }
+    /*--- Emoji Scroollbar*/
+
+    /* width */
+    .epr-body::-webkit-scrollbar {
+      width: 6px !important;
+    }
+
+    /* Track */
+    .epr-body::-webkit-scrollbar-track {
+      background: transparent !important;
+    }
+
+    /* Handle */
+    .epr-body::-webkit-scrollbar-thumb {
+      background: #444e54 !important;
+      border-radius: 10px;
+    }
+
+    .epr-category-nav {
+      padding: 10px 0 !important;
+    }
+    .epr-category-nav .epr-active::after {
+      content: "";
+      width: 140px;
+      height: 3px;
+      border-radius: 50%;
+      background: #00a884;
+      position: absolute;
+      bottom: -10px;
+      left: -55px;
+    }
+  }
 }
 
