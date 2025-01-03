@@ -6,6 +6,7 @@ import EmojiPicker from "emoji-picker-react";
 import { useState, useEffect, useRef } from "react";
 
 export default function MessageInput({ message, setMessage }) {
+  console.log("enter");
   const dispatch = useDispatch();
   const { activeConversation } = useSelector((state) => state.chatState);
   const { user } = useSelector((state) => state.userState);
@@ -13,6 +14,7 @@ export default function MessageInput({ message, setMessage }) {
   const { accessToken } = user;
 
   const [isPickerVisible, setIsPickerVisible] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState(null);
   const inputRef = useRef(null);
 
   const handleChange = (e) => {
@@ -27,18 +29,34 @@ export default function MessageInput({ message, setMessage }) {
     const endPos = inputRef.current.selectionEnd;
     const emoji = emojiData.emoji;
 
+    // console.log(emojiData);
+
     setMessage((prevMsg) => {
       return prevMsg.slice(0, startPos) + emoji + prevMsg.slice(endPos);
     });
 
     // Move the cursor right after the inserted emoji
-    setTimeout(() => {
-      const newPos = startPos + emoji.length;
-      inputRef.current.selectionStart = newPos;
-      inputRef.current.selectionEnd = newPos;
-      inputRef.current.focus();
-    }, 0);
+    // setTimeout(() => {
+    //   const newPos = startPos + emoji.length;
+    //   inputRef.current.selectionStart = newPos;
+    //   inputRef.current.selectionEnd = newPos;
+    //   inputRef.current.focus();
+    // }, 0);
+    setCursorPosition(startPos + emoji.length);
   };
+
+  useEffect(() => {
+    console.log("effect");
+    if (cursorPosition !== null && inputRef.current) {
+      console.log("effect2");
+
+      inputRef.current.selectionStart = cursorPosition;
+      inputRef.current.selectionEnd = cursorPosition;
+      inputRef.current.focus();
+      // Reset so we don’t try to set selection on next re-renders
+      // setCursorPosition(null);
+    }
+  }, [cursorPosition]);
 
   const handleBodyClick = (e) => {
     // If the clicked element is not the icon, reset to "plus" state
@@ -95,7 +113,7 @@ export default function MessageInput({ message, setMessage }) {
                 onEmojiClick={(emojiData) => handleEmojiClick(emojiData)}
                 lazyLoadEmojis={true}
                 theme="dark"
-                emojiStyle="native"
+                emojiStyle="google"
               />
             </div>
           )}
