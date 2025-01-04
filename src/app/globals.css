@@ -21,6 +21,12 @@ body {
     }
   }
 
+  .truncate {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   /* custom scrollbar */
   .custom-scrollbar {
     scrollbar-width: thin; /* For Firefox */

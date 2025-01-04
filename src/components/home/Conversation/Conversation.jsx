@@ -17,11 +17,12 @@ export default function Conversation({ convo }) {
   let openConversation = null;
 
   if (convo) {
-    latestMessage = convo.latestMessage?.message;
+    latestMessage = convo.latestMessage?.message || "";
 
-    if (latestMessage?.length > 47) {
-      latestMessage = latestMessage.slice(0, 47) + "...";
-    }
+    // const graphemes = [...latestMessage];
+    // if (graphemes.length > 47) {
+    //   latestMessage = graphemes.slice(0, 47).join("") + "...";
+    // }
 
     openConversation = () => {
       const values = {
@@ -69,12 +70,16 @@ export default function Conversation({ convo }) {
 
                   {/*Conversation latestMessage*/}
 
-                  <div>
+                  {/* <div>
                     <div className="flex items-center gap-x-1 dark:text-dark_text_2 ">
-                      <div className="flex-1 items-center gap-x-1 dark:text-dark_text_2 text-sm">
+                      <div className="flex-1 items-center gap-x-1 dark:text-dark_text_2 text-sm ">
                         {latestMessage}
                       </div>
                     </div>
+                  </div> */}
+
+                  <div className="max-w-[300px] truncate text-sm dark:text-dark_text_2">
+                    {latestMessage}
                   </div>
                 </div>
               </div>
