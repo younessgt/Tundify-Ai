@@ -35,6 +35,9 @@ module.exports = {
         dark_svg_1: "#AEBAC1",
         dark_svg_2: "#8696A0",
         dark_svg_3: "#ff5722",
+        dark_svg_4: "#7f66ff",
+        dark_svg_5: "#ff2e74",
+        dark_svg_6: "#009de2",
       },
       screens: {
         "max-1826": { max: "1826px" },

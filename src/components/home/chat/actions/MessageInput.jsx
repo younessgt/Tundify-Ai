@@ -6,7 +6,6 @@ import EmojiPicker from "emoji-picker-react";
 import { useState, useEffect, useRef } from "react";
 
 export default function MessageInput({ message, setMessage }) {
-  console.log("enter");
   const dispatch = useDispatch();
   const { activeConversation } = useSelector((state) => state.chatState);
   const { user } = useSelector((state) => state.userState);
@@ -46,10 +45,7 @@ export default function MessageInput({ message, setMessage }) {
   };
 
   useEffect(() => {
-    console.log("effect");
     if (cursorPosition !== null && inputRef.current) {
-      console.log("effect2");
-
       inputRef.current.selectionStart = cursorPosition;
       inputRef.current.selectionEnd = cursorPosition;
       inputRef.current.focus();
