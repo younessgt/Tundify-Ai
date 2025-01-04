@@ -27,14 +27,16 @@ export default function Message({
       >
         <div>
           <div
-            className={`relative dark:text-dark_text_1 pl-2 py-2  rounded-xl shadow-lg ${
+            className={`relative dark:text-dark_text_1 pl-2 py-2  rounded-xl shadow-lg max-w-xs ${
               senderIsMe
                 ? "dark:bg-dark_bg_7 pr-[60px]"
                 : "dark:bg-dark_btn_1 pr-[45px]"
             }`}
           >
             {/* Message text */}
-            <p className="pb-[2px]">{message?.message}</p>
+            <p className="pb-[2px] whitespace-normal break-words">
+              {message?.message}
+            </p>
 
             {/* Timestamp in bottom-right */}
             <span
