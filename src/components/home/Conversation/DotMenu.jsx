@@ -2,13 +2,18 @@ import { useDispatch } from "react-redux";
 import { logout } from "@/features/userSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import useSocketContext from "@/hooks/useSocket";
 
 export default function DotMenu() {
   const dispatch = useDispatch();
   const AUTH_ENDPOINT = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth`;
   const router = useRouter();
+  const { socket, isConnected } = useSocketContext();
 
   const handleLogout = () => {
+    if (socket) {
+      socket.disconnect();
+    }
     dispatch(logout());
     axios.get(`${AUTH_ENDPOINT}/logout`, { withCredentials: true });
     router.push("/login");

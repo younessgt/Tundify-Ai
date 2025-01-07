@@ -11,20 +11,34 @@ export default function SocketProvider({ children }) {
   const socketRef = useRef();
   const dispatch = useDispatch();
 
+  console.log("provider");
+
   // State to track connection status
   const [isConnected, setIsConnected] = useState(false);
   const { user } = useSelector((state) => state.userState);
 
   useEffect(() => {
+    if (!user || !user._id) {
+      // Disconnect the socket if the user logs out
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+        setIsConnected(false);
+      }
+      return;
+    }
     // Initialize the Socket.IO connection
     socketRef.current = io(process.env.NEXT_PUBLIC_BACKEND, {
       withCredentials: true,
     });
 
+    console.log("provider2");
+
     // Event listener for successful connection
     socketRef.current.on("connect", () => {
       setIsConnected(true);
       console.log("socket connected");
+      socketRef.current.emit("user-join-app", user._id);
     });
 
     // Emit a "user-join-app" event to the server when a user connects
@@ -46,7 +60,7 @@ export default function SocketProvider({ children }) {
         console.log("Socket disconnected on cleanup");
       }
     };
-  }, []);
+  }, [user]);
 
   return (
     <SocketContext.Provider value={{ socket: socketRef.current, isConnected }}>
