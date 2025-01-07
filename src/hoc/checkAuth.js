@@ -32,7 +32,7 @@ export const checkAuth = async ({
   }
 
   try {
-    console.log("try");
+    // console.log("try");
     // Decode the access token and check expiration
     const decodedToken = jwtDecode(user.accessToken);
     const currentTime = Math.floor(Date.now() / 1000);

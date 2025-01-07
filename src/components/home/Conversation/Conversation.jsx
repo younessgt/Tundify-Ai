@@ -2,14 +2,20 @@
 import { dateConverter } from "@/utils/dateConverter";
 import { useDispatch, useSelector } from "react-redux";
 import { createOpenConversation } from "@/features/chatSlice";
-import { getRecieverId } from "@/utils/getRecieverId";
-import { useState } from "react";
+import {
+  getRecieverId,
+  getRecieverName,
+  getRecieverPicture,
+} from "@/utils/getReciever";
+import { useState, useEffect } from "react";
 import { capitalise } from "@/utils/capitalise";
+import useSocketContext from "@/hooks/useSocket";
 
 export default function Conversation({ convo }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.userState);
   const { activeConversation } = useSelector((state) => state.chatState);
+  const { socket, isConnected } = useSocketContext();
   // const [activeConvoId, setActiveConvoId] = useState(null);
 
   let latestMessage = "";
@@ -24,13 +30,15 @@ export default function Conversation({ convo }) {
     //   latestMessage = graphemes.slice(0, 47).join("") + "...";
     // }
 
-    openConversation = () => {
+    openConversation = async () => {
       const values = {
         accesstoken: user.accessToken,
         recieverId: getRecieverId(convo.users, user._id),
         isGroup: false,
       };
-      dispatch(createOpenConversation(values));
+      await dispatch(createOpenConversation(values));
+      if (socket && isConnected)
+        socket.emit("user-join-conversation", activeConversation._id);
     };
   }
 
@@ -54,7 +62,7 @@ export default function Conversation({ convo }) {
 
                 <div className="relative max-w-[50px] min-w-[50px] h-[50px] rounded-full overflow-hidden  ">
                   <img
-                    src={convo?.picture}
+                    src={getRecieverPicture(convo.users, user._id)}
                     alt="conversation-picture"
                     className="w-full h-full rounded-full object-cover"
                   />
@@ -65,7 +73,7 @@ export default function Conversation({ convo }) {
                 <div className="w-full flex flex-col justify-center">
                   {/*Conversation name*/}
                   <h1 className="font-bold flex items-center">
-                    {capitalise(convo.name)}
+                    {capitalise(getRecieverName(convo.users, user._id))}
                   </h1>
 
                   {/*Conversation latestMessage*/}

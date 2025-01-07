@@ -4,6 +4,7 @@
 import "./globals.css";
 import ReduxProvider from "../components/ReduxProvider";
 import DarkModeToggle from "../components/DarkModeToggle";
+import SocketProvider from "@/contexts/SocketContext";
 
 export const metadata = {
   title: "TundiFy",
@@ -16,7 +17,7 @@ export default function RootLayout({ children }) {
       <body>
         <ReduxProvider>
           {/* <DarkModeToggle /> */}
-          {children}
+          <SocketProvider>{children}</SocketProvider>
         </ReduxProvider>
       </body>
     </html>

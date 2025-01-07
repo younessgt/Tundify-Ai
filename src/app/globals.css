@@ -33,6 +33,17 @@ body {
     scrollbar-color: #202c33 #324a57; /* For Firefox */
   }
 
+  .status-text {
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .status-text.online {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   /* For Chrome, Edge, Safari */
   .custom-scrollbar::-webkit-scrollbar {
     width: 8px;

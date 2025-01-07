@@ -5,10 +5,27 @@ import { useSelector } from "react-redux";
 import DotsIcon from "@/components/svg/Dots";
 import { SearchIcon } from "@/components/svg";
 import { VideoCall } from "@mui/icons-material";
+import {
+  getRecieverId,
+  getRecieverName,
+  getRecieverPicture,
+} from "@/utils/getReciever";
+
+import useSocketContext from "@/hooks/useSocket";
+import { useState, useEffect } from "react";
+import useRecipientStatus from "@/hooks/useRecipientStatus";
+// import { motion } from "framer-motion";
 
 export default function ChatHeader() {
   const { activeConversation } = useSelector((state) => state.chatState);
-  const { picture, name } = activeConversation;
+  // const { picture, name } = activeConversation;
+  const { user } = useSelector((state) => state.userState);
+  const name = getRecieverName(activeConversation.users, user._id);
+  const picture = getRecieverPicture(activeConversation.users, user._id);
+  const recipientId = getRecieverId(activeConversation.users, user._id);
+  const { socket, isConnected } = useSocketContext();
+  const isRecipientOnline = useRecipientStatus(recipientId, socket);
+
   return (
     <div className="w-full h-full flex justify-between items-center ">
       {/* picture and name */}
@@ -27,7 +44,13 @@ export default function ChatHeader() {
           <h1 className="dark:text-white  font-bold text-sm">
             {capitalise(name)}
           </h1>
-          <span className="dark:text-dark_svg_2 text-xs">Online</span>
+          <span
+            className={`dark:text-dark_svg_2 text-xs status-text ${
+              isRecipientOnline ? "online" : ""
+            }`}
+          >
+            {isRecipientOnline ? "Online" : ""}
+          </span>
         </div>
       </div>
 

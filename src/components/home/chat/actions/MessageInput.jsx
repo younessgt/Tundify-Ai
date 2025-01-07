@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import EmojiPicker from "emoji-picker-react";
 
 import { useState, useEffect, useRef } from "react";
+import useSocketContext from "@/hooks/useSocket";
 
 export default function MessageInput({ message, setMessage }) {
   const dispatch = useDispatch();
@@ -15,6 +16,7 @@ export default function MessageInput({ message, setMessage }) {
   const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(null);
   const inputRef = useRef(null);
+  const { socket, isConnected } = useSocketContext();
 
   const handleChange = (e) => {
     setMessage(e.target.value);
@@ -71,7 +73,10 @@ export default function MessageInput({ message, setMessage }) {
         files: [],
       };
 
-      await dispatch(sendMessage(values));
+      const newMessage = await dispatch(sendMessage(values));
+
+      if (socket && isConnected)
+        socket.emit("user-send-message", newMessage.payload.message);
       setMessage("");
     }
     setIsPickerVisible(false);

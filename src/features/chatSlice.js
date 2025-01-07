@@ -105,7 +105,38 @@ export const sendMessage = createAsyncThunk(
 export const chatSlice = createSlice({
   name: "chatState",
   initialState,
-  reducers: {},
+  reducers: {
+    updateMessages: (state, action) => {
+      const conversation = state.activeConversation;
+
+      if (conversation._id === action.payload.conversation._id) {
+        state.messages = [...state.messages, action.payload];
+      }
+      // state.conversations = state.conversations.map((convo) =>
+      //   convo._id === action.payload.conversation._id
+      //     ? { ...convo, latestMessage: action.payload }
+      //     : convo
+      // );
+
+      let oldConversation = state.conversations.find(
+        (convo) => convo._id === action.payload.conversation._id
+      );
+
+      let newConversation = {
+        ...oldConversation,
+        latestMessage: action.payload,
+      };
+
+      let newConversations = [...state.conversations].filter(
+        (convo) => convo._id !== newConversation._id
+      );
+
+      newConversations.unshift(newConversation);
+      state.conversations = newConversations;
+
+      // console.log("update messages", action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getConversations.pending, (state) => {
@@ -171,6 +202,6 @@ export const chatSlice = createSlice({
   },
 });
 
-export const { updateCliked } = chatSlice.actions;
+export const { updateCliked, updateMessages } = chatSlice.actions;
 export default chatSlice.reducer;
 //
