@@ -7,7 +7,7 @@ const {
   getMessages,
 } = require("../services/message");
 
-exports.sendMessage = catchAsync(async (req, resp, next) => {
+exports.send_Message = catchAsync(async (req, resp, next) => {
   const senderId = req.user._id;
   const { conversationId, message, files } = req.body;
 
@@ -34,7 +34,7 @@ exports.sendMessage = catchAsync(async (req, resp, next) => {
   });
 });
 
-exports.getMessages = catchAsync(async (req, resp, next) => {
+exports.get_Messages = catchAsync(async (req, resp, next) => {
   const { conversation_id } = req.params;
   console.log(conversation_id);
   if (!conversation_id) {

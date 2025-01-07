@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 const logger = require("./configs/logger");
 const mongoose = require("mongoose");
 const redisClient = require("./configs/redisClient");
+const { Server } = require("socket.io");
 
 // handling uncaught exceptions
 process.on("uncaughtException", (err) => {
@@ -12,6 +13,7 @@ process.on("uncaughtException", (err) => {
 // Load environment variables from the .env file
 dotenv.config({ path: "./config.env" });
 const app = require("./app");
+const { socketService } = require("./utils/socketService");
 
 // Connect to the Atlas MongoDB database
 mongoose
@@ -41,6 +43,21 @@ const PORT = process.env.PORT || 8000;
 const HOST = "localhost";
 const server = app.listen(PORT, HOST, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+// Socket io
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin:
+      process.env.NODE_ENV === "development" ? process.env.FRONTEND_URL : false,
+    credentials: true,
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  socketService(socket, io);
 });
 
 // handling unhandled promise rejections

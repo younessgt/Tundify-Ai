@@ -77,27 +77,61 @@ exports.protect = catchAsync(async (req, resp, next) => {
   next();
 });
 
+// exports.protectWithRenewAccessToken = catchAsync(async (req, resp, next) => {
+//   const { refresh_jwt } = req.cookies;
+//   let accessToken;
+
+//   console.log("refresh_jwt", refresh_jwt);
+
+//   // Check if token is available
+//   if (!refresh_jwt) {
+//     return next(
+//       new AppError("You are not logged in! Please log in to get access", 401)
+//     );
+//   }
+
+//   const decodedRefresh = await tokenValidation(
+//     refresh_jwt,
+//     process.env.REFRESH_JWT_SECRET
+//   );
+
+//   if (!decodedRefresh) {
+//     return next(new AppError("Invalid token. Please log in again!", 401));
+//   }
+
+//   // Check if access_Token is available
+//   if (
+//     req.headers.authorization &&
+//     req.headers.authorization.startsWith("Bearer")
+//   ) {
+//     accessToken = req.headers.authorization.split(" ")[1];
+//   }
+
+//   if (!accessToken) {
+//     return next(
+//       new AppError("You are not logged in! Please log in to get access.", 401)
+//     );
+//   }
+
+//   // Verify token
+//   try {
+//     let user;
+//     const decoded = await tokenValidation(accessToken, process.env.JWT_SECRET);
+//     req.user = {
+//       _id: decoded.id,
+//     };
+//     // req.user = decoded;
+//     return next();
+//   } catch (error) {
+//     if (error.name === "TokenExpiredError") {
+//       return handleExpiredAccessToken(decodedRefresh.id, req, resp, next);
+//     }
+//     return next(new AppError("Invalid token. Please log in again!", 401));
+//   }
+// });
+
 exports.protectWithRenewAccessToken = catchAsync(async (req, resp, next) => {
-  const { refresh_jwt } = req.cookies;
   let accessToken;
-
-  console.log("refresh_jwt", refresh_jwt);
-
-  // Check if token is available
-  if (!refresh_jwt) {
-    return next(
-      new AppError("You are not logged in! Please log in to get access", 401)
-    );
-  }
-
-  const decodedRefresh = await tokenValidation(
-    refresh_jwt,
-    process.env.REFRESH_JWT_SECRET
-  );
-
-  if (!decodedRefresh) {
-    return next(new AppError("Invalid token. Please log in again!", 401));
-  }
 
   // Check if access_Token is available
   if (
@@ -113,9 +147,7 @@ exports.protectWithRenewAccessToken = catchAsync(async (req, resp, next) => {
     );
   }
 
-  // Verify token
   try {
-    let user;
     const decoded = await tokenValidation(accessToken, process.env.JWT_SECRET);
     req.user = {
       _id: decoded.id,
@@ -124,6 +156,25 @@ exports.protectWithRenewAccessToken = catchAsync(async (req, resp, next) => {
     return next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
+      const { refresh_jwt } = req.cookies;
+
+      // Check if token is available
+      if (!refresh_jwt) {
+        return next(
+          new AppError("You Session has expired! Please log in again", 401)
+        );
+      }
+
+      const decodedRefresh = await tokenValidation(
+        refresh_jwt,
+        process.env.REFRESH_JWT_SECRET
+      );
+
+      if (!decodedRefresh) {
+        return next(new AppError("Invalid token. Please log in again!", 401));
+      }
+
+      // renew access
       return handleExpiredAccessToken(decodedRefresh.id, req, resp, next);
     }
     return next(new AppError("Invalid token. Please log in again!", 401));

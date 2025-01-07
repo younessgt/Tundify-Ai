@@ -47,9 +47,9 @@ exports.createOrOpenConversation = catchAsync(async (req, resp, next) => {
     }
     // if not create new one
     const conversationData = {
-      name: reciever.name,
+      name: `${senderId}+${recieverId}`,
       //   users: [senderId, new mongoose.Types.ObjectId(recieverId)],
-      picture: reciever.picture,
+      picture: "picture",
       users: [senderId, recieverId],
       isGroup: false,
     };

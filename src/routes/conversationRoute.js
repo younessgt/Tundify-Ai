@@ -6,9 +6,16 @@ const conversationController = require("../controllers/conversationController");
 const router = express.Router();
 
 router.use(trimRequest.all);
-router.use(authMiddleware.protect);
+// router.use(authMiddleware.protect);
 
-router.route("/").post(conversationController.createOrOpenConversation);
-router.route("/").get(conversationController.getConversations);
+router
+  .route("/")
+  .post(
+    authMiddleware.protectWithRenewAccessToken,
+    conversationController.createOrOpenConversation
+  );
+router
+  .route("/")
+  .get(authMiddleware.protect, conversationController.getConversations);
 
 module.exports = router;

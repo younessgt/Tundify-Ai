@@ -6,9 +6,19 @@ const messageController = require("../controllers/messageController");
 const router = express.Router();
 
 router.use(trimRequest.all);
-router.use(authMiddleware.protect);
+// router.use(authMiddleware.protect);
 
-router.route("/").post(messageController.sendMessage);
-router.route("/:conversation_id").get(messageController.getMessages);
+router
+  .route("/")
+  .post(
+    authMiddleware.protectWithRenewAccessToken,
+    messageController.send_Message
+  );
+router
+  .route("/:conversation_id")
+  .get(
+    authMiddleware.protectWithRenewAccessToken,
+    messageController.get_Messages
+  );
 
 module.exports = router;
