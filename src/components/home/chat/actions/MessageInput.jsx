@@ -2,6 +2,7 @@ import { sendMessage } from "@/features/chatSlice";
 import { RiEmojiStickerLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import EmojiPicker from "emoji-picker-react";
+import { getRecieverId } from "@/utils/getReciever";
 
 import { useState, useEffect, useRef } from "react";
 import useSocketContext from "@/hooks/useSocket";
@@ -10,16 +11,25 @@ export default function MessageInput({ message, setMessage }) {
   const dispatch = useDispatch();
   const { activeConversation } = useSelector((state) => state.chatState);
   const { user } = useSelector((state) => state.userState);
-
   const { accessToken } = user;
-
   const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(null);
   const inputRef = useRef(null);
+  const inpuTimeOut = useRef(null);
   const { socket, isConnected } = useSocketContext();
+  // const recipientId = getRecieverId(activeConversation.users, user._id);
 
   const handleChange = (e) => {
     setMessage(e.target.value);
+
+    if (socket && isConnected) {
+      socket.emit("user-typing", activeConversation._id);
+      if (inpuTimeOut.current) clearTimeout(inpuTimeOut.current);
+
+      inpuTimeOut.current = setTimeout(() => {
+        socket.emit("user-stop-typing", activeConversation._id);
+      }, 1000);
+    }
   };
 
   const handleEmojiClick = (emojiData) => {
@@ -75,8 +85,11 @@ export default function MessageInput({ message, setMessage }) {
 
       const newMessage = await dispatch(sendMessage(values));
 
-      if (socket && isConnected)
+      if (socket && isConnected) {
         socket.emit("user-send-message", newMessage.payload.message);
+
+        socket.emit("user-stop-typing");
+      }
       setMessage("");
     }
     setIsPickerVisible(false);

@@ -11,8 +11,6 @@ export default function SocketProvider({ children }) {
   const socketRef = useRef();
   const dispatch = useDispatch();
 
-  console.log("provider");
-
   // State to track connection status
   const [isConnected, setIsConnected] = useState(false);
   const { user } = useSelector((state) => state.userState);
@@ -32,8 +30,6 @@ export default function SocketProvider({ children }) {
       withCredentials: true,
     });
 
-    console.log("provider2");
-
     // Event listener for successful connection
     socketRef.current.on("connect", () => {
       setIsConnected(true);
@@ -42,7 +38,7 @@ export default function SocketProvider({ children }) {
     });
 
     // Emit a "user-join-app" event to the server when a user connects
-    socketRef.current.emit("user-join-app", user._id);
+    // socketRef.current.emit("user-join-app", user._id);
 
     socketRef.current.on("recieve-message", (message) => {
       dispatch(updateMessages(message));

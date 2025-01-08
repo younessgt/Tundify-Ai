@@ -2,13 +2,18 @@ import { useSelector } from "react-redux";
 import Message from "./Message";
 import React from "react";
 import { formatDate } from "@/utils/dateConverter";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import useSocketContext from "@/hooks/useSocket";
+import Typing from "./Typing";
 
 export default function ChatMessages() {
-  const { messages } = useSelector((state) => state.chatState);
+  const { messages, activeConversation } = useSelector(
+    (state) => state.chatState
+  );
   const { user } = useSelector((state) => state.userState);
   const messagesEndRef = useRef(null);
-
+  const { socket, isConnected } = useSocketContext();
+  const [isTyping, setIsTyping] = useState(false);
   // Auto scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -16,6 +21,26 @@ export default function ChatMessages() {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleTyping = (conversationId) => {
+      if (conversationId === activeConversation._id) setIsTyping(true);
+    };
+
+    const handleStopTyping = () => {
+      setIsTyping(false);
+    };
+
+    socket.on("typing", handleTyping);
+    socket.on("stop-typing", handleStopTyping);
+
+    return () => {
+      socket.off("typing", handleTyping);
+      socket.off("stop-typing", handleStopTyping);
+    };
+  }, [socket, activeConversation]);
 
   return (
     <div className="flex flex-col overflow-y-auto custom-scrollbar overflow-x-hidden  w-full py-2 px-[6%] h-full">
@@ -41,6 +66,23 @@ export default function ChatMessages() {
             </React.Fragment>
           );
         })}
+
+      {/* {isTyping && (
+        <div className="flex items-center space-x-2 text-black dark:text-gray-300">
+          <span>Typing...</span>
+          <div className="animate-pulse">
+            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+          </div>
+          <div className="animate-pulse">
+            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+          </div>
+          <div className="animate-pulse">
+            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+          </div>
+        </div>
+      )} */}
+
+      {isTyping && <Typing messages={messages} />}
       <div ref={messagesEndRef} />
     </div>
   );

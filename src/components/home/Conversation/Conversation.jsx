@@ -11,36 +11,42 @@ import { useState, useEffect } from "react";
 import { capitalise } from "@/utils/capitalise";
 import useSocketContext from "@/hooks/useSocket";
 
-export default function Conversation({ convo }) {
+export default function Conversation({ convo, isTyping }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.userState);
   const { activeConversation } = useSelector((state) => state.chatState);
   const { socket, isConnected } = useSocketContext();
+  // const [isTyping, setIsTyping] = useState(false);
+
   // const [activeConvoId, setActiveConvoId] = useState(null);
 
   let latestMessage = "";
 
   let openConversation = null;
 
-  if (convo) {
-    latestMessage = convo.latestMessage?.message || "";
+  latestMessage = convo.latestMessage?.message || "";
 
-    // const graphemes = [...latestMessage];
-    // if (graphemes.length > 47) {
-    //   latestMessage = graphemes.slice(0, 47).join("") + "...";
-    // }
+  // const graphemes = [...latestMessage];
+  // if (graphemes.length > 47) {
+  //   latestMessage = graphemes.slice(0, 47).join("") + "...";
+  // }
 
-    openConversation = async () => {
-      const values = {
-        accesstoken: user.accessToken,
-        recieverId: getRecieverId(convo.users, user._id),
-        isGroup: false,
-      };
-      await dispatch(createOpenConversation(values));
-      if (socket && isConnected)
-        socket.emit("user-join-conversation", activeConversation._id);
+  openConversation = async () => {
+    const values = {
+      accesstoken: user.accessToken,
+      recieverId: getRecieverId(convo.users, user._id),
+      isGroup: false,
     };
-  }
+    await dispatch(createOpenConversation(values));
+  };
+
+  console.log("isTyping", isTyping);
+
+  useEffect(() => {
+    if (socket && isConnected && activeConversation?._id) {
+      socket.emit("user-join-conversation", activeConversation._id);
+    }
+  }, [socket, isConnected, activeConversation]);
 
   return (
     <>
@@ -78,16 +84,12 @@ export default function Conversation({ convo }) {
 
                   {/*Conversation latestMessage*/}
 
-                  {/* <div>
-                    <div className="flex items-center gap-x-1 dark:text-dark_text_2 ">
-                      <div className="flex-1 items-center gap-x-1 dark:text-dark_text_2 text-sm ">
-                        {latestMessage}
-                      </div>
-                    </div>
-                  </div> */}
-
-                  <div className="max-w-[300px] truncate text-sm dark:text-dark_text_2">
-                    {latestMessage}
+                  <div className="max-w-[300px] truncate text-sm dark:text-dark_text_2 relative">
+                    {isTyping ? (
+                      <span>typing...</span>
+                    ) : (
+                      <span>{latestMessage}</span>
+                    )}
                   </div>
                 </div>
               </div>
