@@ -40,8 +40,6 @@ export default function Conversation({ convo, isTyping }) {
     await dispatch(createOpenConversation(values));
   };
 
-  console.log("isTyping", isTyping);
-
   useEffect(() => {
     if (socket && isConnected && activeConversation?._id) {
       socket.emit("user-join-conversation", activeConversation._id);

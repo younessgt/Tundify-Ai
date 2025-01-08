@@ -107,9 +107,20 @@ export const chatSlice = createSlice({
   initialState,
   reducers: {
     updateMessages: (state, action) => {
-      const conversation = state.activeConversation;
+      let conversation = state.conversations.find(
+        (convo) => convo._id === action.payload.conversation._id
+      );
 
-      if (conversation._id === action.payload.conversation._id) {
+      if (!conversation) {
+        state.conversations = [
+          ...state.conversations,
+          action.payload.conversation,
+        ];
+        conversation = action.payload.conversation;
+      }
+      // const conversation = state.activeConversation;
+
+      if (state.activeConversation._id === action.payload.conversation._id) {
         state.messages = [...state.messages, action.payload];
       }
       // state.conversations = state.conversations.map((convo) =>
@@ -118,12 +129,12 @@ export const chatSlice = createSlice({
       //     : convo
       // );
 
-      let oldConversation = state.conversations.find(
-        (convo) => convo._id === action.payload.conversation._id
-      );
+      // let oldConversation = state.conversations.find(
+      //   (convo) => convo._id === action.payload.conversation._id
+      // );
 
       let newConversation = {
-        ...oldConversation,
+        ...conversation,
         latestMessage: action.payload,
       };
 
@@ -180,6 +191,7 @@ export const chatSlice = createSlice({
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
         // console.log("API Response for conversations:", action.payload);
+        // console.log("message", action.payload.message);
 
         state.status = "succeeded";
         state.messages = [...state.messages, action.payload.message];

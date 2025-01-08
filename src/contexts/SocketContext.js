@@ -41,6 +41,7 @@ export default function SocketProvider({ children }) {
     // socketRef.current.emit("user-join-app", user._id);
 
     socketRef.current.on("recieve-message", (message) => {
+      console.log("recive message", message);
       dispatch(updateMessages(message));
     });
     // Event listener for disconnection

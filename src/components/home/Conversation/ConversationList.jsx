@@ -13,6 +13,8 @@ export default function ConversationList({ searchValue }) {
   const [typingStatus, setTypingStatus] = useState({});
   const { socket } = useSocketContext();
 
+  console.log("conversationList", conversations);
+
   useEffect(() => {
     setLoading(false);
   }, []);
