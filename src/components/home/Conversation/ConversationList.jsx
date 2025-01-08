@@ -3,49 +3,17 @@ import { useEffect, useState } from "react";
 
 import { CircularProgress } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import useSocketContext from "@/hooks/useSocket";
+// import useSocketContext from "@/hooks/useSocket";
 
 import Conversation from "./Conversation";
 
-export default function ConversationList({ searchValue }) {
+export default function ConversationList({ searchValue, typingStatus }) {
   const { conversations } = useSelector((state) => state.chatState);
   const [loading, setLoading] = useState(true);
-  const [typingStatus, setTypingStatus] = useState({});
-  const { socket } = useSocketContext();
-
-  console.log("conversationList", conversations);
 
   useEffect(() => {
     setLoading(false);
   }, []);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleTyping = (conversationId) => {
-      setTypingStatus((prev) => ({
-        ...prev,
-        [conversationId]: true,
-      }));
-    };
-
-    const handleStopTyping = (conversationId) => {
-      setTypingStatus((prev) => {
-        const updated = { ...prev };
-        delete updated[conversationId];
-        console.log("updated", updated);
-        return updated;
-      });
-    };
-
-    socket.on("typing", handleTyping);
-    socket.on("stop-typing", handleStopTyping);
-
-    return () => {
-      socket.off("typing", handleTyping);
-      socket.off("stop-typing", handleStopTyping);
-    };
-  }, [socket]);
 
   if (loading) {
     return (

@@ -7,7 +7,7 @@ import {
   getRecieverName,
   getRecieverPicture,
 } from "@/utils/getReciever";
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
 import { capitalise } from "@/utils/capitalise";
 import useSocketContext from "@/hooks/useSocket";
 
@@ -16,20 +16,12 @@ export default function Conversation({ convo, isTyping }) {
   const { user } = useSelector((state) => state.userState);
   const { activeConversation } = useSelector((state) => state.chatState);
   const { socket, isConnected } = useSocketContext();
-  // const [isTyping, setIsTyping] = useState(false);
-
-  // const [activeConvoId, setActiveConvoId] = useState(null);
 
   let latestMessage = "";
 
   let openConversation = null;
 
   latestMessage = convo.latestMessage?.message || "";
-
-  // const graphemes = [...latestMessage];
-  // if (graphemes.length > 47) {
-  //   latestMessage = graphemes.slice(0, 47).join("") + "...";
-  // }
 
   openConversation = async () => {
     const values = {
@@ -39,12 +31,6 @@ export default function Conversation({ convo, isTyping }) {
     };
     await dispatch(createOpenConversation(values));
   };
-
-  useEffect(() => {
-    if (socket && isConnected && activeConversation?._id) {
-      socket.emit("user-join-conversation", activeConversation._id);
-    }
-  }, [socket, isConnected, activeConversation]);
 
   return (
     <>
