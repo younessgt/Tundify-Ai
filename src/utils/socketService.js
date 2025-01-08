@@ -13,17 +13,12 @@ exports.socketService = (socket, io) => {
     socket.userId = userId;
 
     socket.join(userId);
-    console.log("user join app backend");
 
     (async () => {
       try {
         // Add the new user to Redis
         await redisClient.hset(ONLINE_USERS_KEY, userId, socket.id);
 
-        // // Fetch the updated list of all online users
-        // const onlineUsers = await redisClient.hkeys(ONLINE_USERS_KEY);
-
-        // io.emit("user-online", onlineUsers);
         io.emit("user-online", { userId });
       } catch (err) {
         console.error("Error adding user to Redis:", err);
@@ -71,6 +66,7 @@ exports.socketService = (socket, io) => {
     }
   });
 
+  // handle user status
   socket.on("check-recipient-status", async (recipientId) => {
     try {
       const socketId = await redisClient.hget(ONLINE_USERS_KEY, recipientId);
@@ -82,5 +78,16 @@ exports.socketService = (socket, io) => {
     } catch (err) {
       console.error("Error checking recipient status:", err);
     }
+  });
+
+  socket.on("user-typing", (conversationId) => {
+    console.log(`User is typing in conversation: ${conversationId}`);
+    socket.in(conversationId).emit("typing", conversationId);
+  });
+
+  socket.on("user-stop-typing", (conversationId) => {
+    console.log("user-stop-typing");
+
+    socket.in(conversationId).emit("stop-typing", conversationId);
   });
 };
