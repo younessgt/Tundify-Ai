@@ -121,7 +121,7 @@ export default function MessageInput({ message, setMessage }) {
 
           {/* Emoji Picker */}
           {isPickerVisible && (
-            <div className="absolute bottom-12 left-0 z-50 openEmojiAnimation">
+            <div className="absolute bottom-12 left-0 z-50 openEmojiAnimation w-full">
               <EmojiPicker
                 className="custom-emoji-picker"
                 onEmojiClick={(emojiData) => handleEmojiClick(emojiData)}

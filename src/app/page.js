@@ -1,13 +1,8 @@
 "use client";
 
-// import { useSelector, useDispatch } from "react-redux";
-// import Link from "next/link";
-import { logout } from "../features/userSlice";
-// import { CallIcon, ChatIcon } from "../components/svg";
 import protectedWithAuth from "../hoc/protectedWithAuth";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { useRouter } from "next/navigation";
+
 import SideBar from "@/components/home/sideBar/SideBar";
 import Conversations from "@/components/home/Conversation/Conversations";
 import { useState, useEffect } from "react";
@@ -15,8 +10,6 @@ import { motion } from "framer-motion";
 import { getConversations } from "../features/chatSlice";
 import WelcomePage from "@/components/home/chat/WelcomePage";
 import Chat from "@/components/home/chat/Chat";
-import useSocket from "@/hooks/useSocket";
-import useSocketContext from "@/hooks/useSocket";
 
 function Home() {
   const [isDiv4Open, setIsDiv4Open] = useState(false);
@@ -27,9 +20,6 @@ function Home() {
   const [selectedMenu, setSelectedMenu] = useState("chat");
   const { user } = useSelector((state) => state.userState);
   const { activeConversation } = useSelector((state) => state.chatState);
-
-  // const { socket, isConnected } = useSocketContext();
-  console.log("home");
 
   useEffect(() => {
     if (user?.accessToken) {

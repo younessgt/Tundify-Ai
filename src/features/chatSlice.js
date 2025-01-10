@@ -123,15 +123,6 @@ export const chatSlice = createSlice({
       if (state.activeConversation._id === action.payload.conversation._id) {
         state.messages = [...state.messages, action.payload];
       }
-      // state.conversations = state.conversations.map((convo) =>
-      //   convo._id === action.payload.conversation._id
-      //     ? { ...convo, latestMessage: action.payload }
-      //     : convo
-      // );
-
-      // let oldConversation = state.conversations.find(
-      //   (convo) => convo._id === action.payload.conversation._id
-      // );
 
       let newConversation = {
         ...conversation,
@@ -146,6 +137,9 @@ export const chatSlice = createSlice({
       state.conversations = newConversations;
 
       // console.log("update messages", action.payload);
+    },
+    addFiles: (state, action) => {
+      state.files = [...state.files, action.payload];
     },
   },
   extraReducers: (builder) => {
@@ -214,6 +208,6 @@ export const chatSlice = createSlice({
   },
 });
 
-export const { updateCliked, updateMessages } = chatSlice.actions;
+export const { updateCliked, updateMessages, addFiles } = chatSlice.actions;
 export default chatSlice.reducer;
 //

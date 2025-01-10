@@ -34,14 +34,10 @@ export default function Conversations() {
     };
   }, []);
 
-  console.log(typingStatus);
-
   useEffect(() => {
-    console.log("socket", socket);
     if (!socket) return;
 
     const handleTyping = (conversationId) => {
-      console.log("type");
       setTypingStatus((prev) => ({
         ...prev,
         [conversationId]: true,
@@ -52,7 +48,6 @@ export default function Conversations() {
       setTypingStatus((prev) => {
         const updated = { ...prev };
         delete updated[conversationId];
-        console.log("updated", updated);
         return updated;
       });
     };
