@@ -2,38 +2,39 @@ import { useRef } from "react";
 import { IoMdPhotos } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { addFiles } from "@/features/chatSlice";
+import { getFileType } from "@/utils/getFileType";
 export default function Photos() {
   const inputRef = useRef();
   const dispatch = useDispatch();
 
-  const { files } = useSelector((state) => state.chatState);
-
-  console.log(files);
-
-  const handleInpuChange = (e) => {
+  const handleInputChange = (e) => {
     let files = Array.from(e.target.files);
 
-    files.forEach((fileImage) => {
+    files.forEach((file) => {
       if (
-        fileImage.type !== "image/png" &&
-        fileImage.type !== "image/webp" &&
-        fileImage.type !== "image/jpeg" &&
-        fileImage.type !== "image/gif"
+        file.type !== "image/png" &&
+        file.type !== "image/webp" &&
+        file.type !== "image/jpeg" &&
+        file.type !== "image/gif" &&
+        file.type !== "video/mp4" &&
+        file.type !== "video/mpeg" &&
+        file.type !== "video/x-msvideo" &&
+        file.type !== "video/webm"
       ) {
-        files = files.filter((elem) => elem.name !== fileImage.name);
+        files = files.filter((elem) => elem.name !== file.name);
         return;
-      } else if (fileImage.size > 1024 * 1024 * 5) {
-        files = files.filter((elem) => elem.name !== fileImage.name);
+      } else if (file.size > 1024 * 1024 * 5) {
+        files = files.filter((elem) => elem.name !== file.name);
         return;
       } else {
         const reader = new FileReader();
-        reader.readAsDataURL(fileImage);
+        reader.readAsDataURL(file);
         reader.onload = (e) => {
           dispatch(
             addFiles({
-              file: fileImage,
-              imgBase64: e.target.result,
-              type: "image",
+              file: file,
+              fileBase64: e.target.result,
+              type: getFileType(file.type),
             })
           );
         };
@@ -49,14 +50,15 @@ export default function Photos() {
         <IoMdPhotos className="w-6 h-6 fill-dark_svg_5" />
       </div>
       <div>
-        <span>Photos</span>
+        <span>Photos & Videos</span>
       </div>
       <input
         type="file"
         hidden
+        multiple
         ref={inputRef}
-        onChange={handleInpuChange}
-        accept="image/png,image/jpeg,image/gif,image/webp"
+        onChange={handleInputChange}
+        accept="image/png,image/jpeg,image/gif,image/webp, video/*"
       />
     </li>
   );
