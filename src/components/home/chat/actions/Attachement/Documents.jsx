@@ -8,9 +8,7 @@ export default function Documents() {
   const inputRef = useRef();
   const dispatch = useDispatch();
 
-  const { files } = useSelector((state) => state.chatState);
-
-  console.log(files);
+  const { activeConversation } = useSelector((state) => state.chatState);
 
   const handleInputChange = (e) => {
     let files = Array.from(e.target.files);
@@ -47,7 +45,14 @@ export default function Documents() {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = (e) => {
-          dispatch(addFiles({ file, type: getFileType(file.type) }));
+          dispatch(
+            addFiles({
+              file,
+              type: getFileType(file.type),
+              fileConvoId: activeConversation._id,
+              id: crypto.randomUUID(),
+            })
+          );
         };
       }
     });

@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { getConversations } from "../features/chatSlice";
 import WelcomePage from "@/components/home/chat/WelcomePage";
 import Chat from "@/components/home/chat/Chat";
+import ImageEditor from "@/components/home/ImageEditor";
 
 function Home() {
   const [isDiv4Open, setIsDiv4Open] = useState(false);
@@ -127,6 +128,11 @@ function Home() {
       </div>
     </div>
   );
+  // return (
+  //   <>
+  //     <ImageEditor />
+  //   </>
+  // );
 }
 
 export default protectedWithAuth(Home);

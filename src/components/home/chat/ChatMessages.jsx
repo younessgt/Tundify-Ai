@@ -67,21 +67,6 @@ export default function ChatMessages() {
           );
         })}
 
-      {/* {isTyping && (
-        <div className="flex items-center space-x-2 text-black dark:text-gray-300">
-          <span>Typing...</span>
-          <div className="animate-pulse">
-            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-          </div>
-          <div className="animate-pulse">
-            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-          </div>
-          <div className="animate-pulse">
-            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-          </div>
-        </div>
-      )} */}
-
       {isTyping && <Typing messages={messages} />}
       <div ref={messagesEndRef} />
     </div>

@@ -85,7 +85,6 @@ export default function RegisterForm() {
     // If the data is valid, we can move  forward with the registration process
     try {
       await validateRegistration(dataForm);
-
     } catch (error) {
       console.log("Error Coming From registartion validation : ", error);
       return;

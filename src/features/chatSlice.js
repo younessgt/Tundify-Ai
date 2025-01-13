@@ -141,6 +141,14 @@ export const chatSlice = createSlice({
     addFiles: (state, action) => {
       state.files = [...state.files, action.payload];
     },
+    removeAllFiles: (state) => {
+      state.files = state.files.filter(
+        (file) => file.fileConvoId !== state.activeConversation._id
+      );
+    },
+    removeFiles: (state, action) => {
+      state.files = state.files.filter((file) => file.id !== action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -208,6 +216,12 @@ export const chatSlice = createSlice({
   },
 });
 
-export const { updateCliked, updateMessages, addFiles } = chatSlice.actions;
+export const {
+  updateCliked,
+  updateMessages,
+  addFiles,
+  removeAllFiles,
+  removeFiles,
+} = chatSlice.actions;
 export default chatSlice.reducer;
 //

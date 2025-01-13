@@ -6,6 +6,7 @@ import { getFileType } from "@/utils/getFileType";
 export default function Photos() {
   const inputRef = useRef();
   const dispatch = useDispatch();
+  const { activeConversation } = useSelector((state) => state.chatState);
 
   const handleInputChange = (e) => {
     let files = Array.from(e.target.files);
@@ -35,6 +36,8 @@ export default function Photos() {
               file: file,
               fileBase64: e.target.result,
               type: getFileType(file.type),
+              fileConvoId: activeConversation._id,
+              id: crypto.randomUUID(),
             })
           );
         };
