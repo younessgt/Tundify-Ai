@@ -34,3 +34,45 @@ export const getFileType = (mimeType) => {
       return "IMAGE";
   }
 };
+
+export const getMessageTitle = (file) => {
+  switch (file.type) {
+    case "TXT":
+      return `${file.file.original_filename}.${
+        file.file.public_id.split(".")[1]
+      }`;
+    case "PDF":
+      return `${file.file.original_filename}.${
+        file.file.public_id.split(".")[1]
+      }`;
+    case "DOCX":
+      return `${file.file.original_filename}.${
+        file.file.public_id.split(".")[1]
+      }`;
+    case "PPTX":
+      return `${file.file.original_filename}.${
+        file.file.public_id.split(".")[1]
+      }`;
+    case "XLSX":
+      return `${file.file.original_filename}.${
+        file.file.public_id.split(".")[1]
+      }`;
+    case "RAR":
+      return `${file.file.original_filename}.${
+        file.file.public_id.split(".")[1]
+      }`;
+    case "ZIP":
+      return `${file.file.original_filename}.${
+        file.file.public_id.split(".")[1]
+      }`;
+    case "AUDIO":
+      return "Audio";
+    case "VIDEO":
+      return "Video";
+    case "IMAGE":
+      return "Photo";
+
+    default:
+      return "Unknown";
+  }
+};

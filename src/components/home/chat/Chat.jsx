@@ -2,18 +2,22 @@
 import { useDispatch, useSelector } from "react-redux";
 import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getConversationMessages } from "@/features/chatSlice";
 import { CircularProgress } from "@mui/material";
 import ChatActions from "./ChatActions";
 import { getFilesForActiveConversation } from "@/utils/getFilesForActiveConversation";
 import FilesPreview from "./filesPreview/FilesPreview";
 import { motion } from "framer-motion";
+import ThumbnailListAndSend from "./filesPreview/ThumbnailListAndSend";
 
 export default function Chat() {
+  const [beginRecording, setBeginRecording] = useState(false);
   const dispatch = useDispatch();
   const { activeConversation, files } = useSelector((state) => state.chatState);
   let newFiles;
+
+  // console.log("files", files);
 
   if (files) {
     newFiles = getFilesForActiveConversation(files, activeConversation);
@@ -29,6 +33,8 @@ export default function Chat() {
     if (user?.accessToken && activeConversation?._id) {
       dispatch(getConversationMessages(values));
     }
+
+    setBeginRecording(false);
   }, [activeConversation]);
 
   return (
@@ -38,12 +44,6 @@ export default function Chat() {
         <ChatHeader />
       </div>
       {newFiles.length > 0 ? (
-        // <div
-        //   className="w-full h-full transform transition-transform duration-800 ease-in-out translate-y-full"
-        //   style={{ transform: "translateY(0)" }}
-        // >
-        //   <FilesPreview />
-        // </div>
         <motion.div
           className="w-full h-full"
           initial={{ y: "100%" }}
@@ -59,7 +59,10 @@ export default function Chat() {
             <ChatMessages />
           </div>
           <div className="h-[60px] w-full flex items-center dark:bg-dark_bg_3 border-t dark:border-t-dark_border_2">
-            <ChatActions />
+            <ChatActions
+              setBeginRecording={setBeginRecording}
+              beginRecording={beginRecording}
+            />
           </div>
         </>
       )}

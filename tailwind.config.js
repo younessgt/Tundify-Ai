@@ -30,6 +30,7 @@ module.exports = {
         dark_hover_1: "#2A3942",
         dark_btn_1: "#ff5722",
         dark_btn_2: "#CC461B",
+        dark_btn_3: "#ad543b",
         dark_border_1: "#222D34",
         dark_border_2: "#313D45",
         dark_svg_1: "#AEBAC1",

@@ -10,6 +10,7 @@ export default function AddFile() {
 
   const handleAddFiles = (e) => {
     const fileAdded = addFileToState(e, activeConversation, dispatch);
+
     if (!fileAdded) return;
   };
   return (
@@ -24,7 +25,7 @@ export default function AddFile() {
         ref={inputRef}
         onChange={handleAddFiles}
         multiple
-        accept="image/png,image/jpeg,image/gif,image/webp, video/* application/*,text/*,audio/*"
+        accept="image/png,image/jpeg,image/gif,image/webp,video/*,application/*,text/*,audio/*"
       />
     </div>
   );

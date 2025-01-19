@@ -10,6 +10,7 @@ import Conversation from "./Conversation";
 export default function ConversationList({ searchValue, typingStatus }) {
   const { conversations } = useSelector((state) => state.chatState);
   const [loading, setLoading] = useState(true);
+  // console.log("conversations", conversations);
 
   useEffect(() => {
     setLoading(false);

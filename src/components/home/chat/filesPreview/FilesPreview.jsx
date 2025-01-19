@@ -3,36 +3,48 @@ import FileView from "./FileView";
 import Header from "./Header";
 import InputMessage from "./InputMessage";
 import ThumbnailListAndSend from "./ThumbnailListAndSend";
+import { useDispatch, useSelector } from "react-redux";
+import { updateFileMessage } from "@/features/chatSlice";
 
 export default function FilesPreview() {
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
+  const { files } = useSelector((state) => state.chatState);
   const [fileIndex, setFileIndex] = useState(0);
+  const dispatch = useDispatch();
+
+  const handleUpdateFileMessage = (newMessage) => {
+    const fileId = files[fileIndex]?.id;
+    dispatch(updateFileMessage({ fileId, newMessage }));
+  };
 
   return (
-    <div className=" w-full h-full flex justify-center items-center relative">
-      <div className=" w-full h-full flex flex-col p-2 gap-y-4 items-center">
-        {/*Header */}
-        <div className="w-full  flex justify-between items-center">
+    <div className="w-full h-full flex justify-center items-center relative bg-dark_bg_2">
+      <div className="w-full h-full flex flex-col items-center px-4">
+        {/* Header */}
+        <div className="w-full h-[10%] flex justify-between items-center border-b border-dark_bg_9">
           <Header />
         </div>
-        {/*File Preview */}
 
-        <div className="w-full flex justify-center items-center">
+        {/* File Preview */}
+        <div className="flex-1 flex justify-center items-center overflow-hidden border-b border-dark_bg_9">
           <FileView fileIndex={fileIndex} />
         </div>
 
-        {/*Input Message */}
-        <div className="w-full flex justify-center items-center absolute bottom-[140px]">
-          <InputMessage message={message} setMessage={setMessage} />
+        {/* Input Message */}
+        <div className="w-full h-[10%] flex justify-center items-center">
+          {/* <InputMessage message={message} setMessage={setMessage} /> */}
+          <InputMessage
+            message={files[fileIndex]?.message || ""}
+            setMessage={handleUpdateFileMessage}
+          />
         </div>
-        <div className="border-[0.5px] w-full border-dark_bg_9 mb-4"></div>
 
-        {/*Thumbnail list with send Button */}
-        <div className="w-full flex justify-center items-center">
+        {/* Thumbnail List with Send Button */}
+        <div className="w-full h-[15%] flex justify-center items-center overflow-hidden">
           <ThumbnailListAndSend
             fileIndex={fileIndex}
             setFileIndex={setFileIndex}
-            message={message}
+            // message={message}
           />
         </div>
       </div>

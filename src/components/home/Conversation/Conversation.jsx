@@ -10,6 +10,7 @@ import {
 // import { useState, useEffect } from "react";
 import { capitalise } from "@/utils/capitalise";
 import useSocketContext from "@/hooks/useSocket";
+import { getMessageTitle } from "@/utils/getFileType";
 
 export default function Conversation({ convo, isTyping }) {
   const dispatch = useDispatch();
@@ -18,10 +19,23 @@ export default function Conversation({ convo, isTyping }) {
   const { socket, isConnected } = useSocketContext();
 
   let latestMessage = "";
+  const finalFileIndex = convo.latestMessage?.files.length - 1;
+  const finalFile = convo.latestMessage?.files[finalFileIndex];
 
   let openConversation = null;
 
-  latestMessage = convo.latestMessage?.message || "";
+  if (!finalFile) {
+    latestMessage =
+      convo.latestMessage?.message ||
+      convo.latestMessage?.files[finalFileIndex].message ||
+      "";
+  } else {
+    latestMessage =
+      convo.latestMessage?.message ||
+      convo.latestMessage?.files[finalFileIndex].message ||
+      getMessageTitle(finalFile) ||
+      "";
+  }
 
   openConversation = async () => {
     const values = {

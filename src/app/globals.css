@@ -61,6 +61,10 @@ body {
     height: calc(100vh - 300px);
     /* padding: 8px 0; */
   }
+  .hviewVideo {
+    height: calc(100vh - 300px);
+    padding-top: -50px;
+  }
 
   .openEmojiAnimation {
     animation: openAn 0.1s forwards;

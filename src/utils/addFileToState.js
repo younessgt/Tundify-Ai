@@ -3,6 +3,7 @@ import { getFileType } from "@/utils/getFileType";
 
 export const addFileToState = (e, activeConversation, dispatch) => {
   let files = Array.from(e.target.files);
+  let atLeastOneFileAdded = false;
   files.forEach((file) => {
     if (
       file.type !== "application/pdf" &&
@@ -36,10 +37,10 @@ export const addFileToState = (e, activeConversation, dispatch) => {
     ) {
       files = files.filter((elem) => elem.name !== file.name);
 
-      return false;
+      return;
     } else if (file.size > 1024 * 1024 * 10) {
       files = files.filter((elem) => elem.name !== file.name);
-      return false;
+      return;
     } else {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -48,14 +49,18 @@ export const addFileToState = (e, activeConversation, dispatch) => {
           addFiles({
             file,
             fileBase64:
-              getFileType(file.type) === "IMAGE" ? e.target.result : "",
+              getFileType(file.type) === "IMAGE" ||
+              getFileType(file.type) === "VIDEO"
+                ? e.target.result
+                : "",
             type: getFileType(file.type),
             fileConvoId: activeConversation._id,
             id: crypto.randomUUID(),
           })
         );
       };
-      return true;
+      atLeastOneFileAdded = true;
     }
   });
+  return atLeastOneFileAdded;
 };

@@ -6,7 +6,7 @@ export default function UserSearchResult({ newContact }) {
   const { user } = useSelector((state) => state.userState);
 
   const openConversation = () => {
-    console.log("createConversation");
+    // console.log("createConversation");
     const values = {
       accesstoken: user.accessToken,
       recieverId: newContact._id,
