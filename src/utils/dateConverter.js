@@ -6,7 +6,7 @@ export const dateConverter = (date) => {
 
   const diffInMinutes = now.diff(momentDate, "minutes");
   const diffInHours = now.diff(momentDate, "hours");
-  const diffInDays = now.diff(momentDate, "days");
+  const diffInDays = now.diff(momentDate, "days", true);
 
   if (diffInMinutes < 1) {
     return "Now";
@@ -31,7 +31,7 @@ export const formatDate = (date) => {
   const now = moment();
   const momentDate = moment(date);
 
-  const diffInDays = now.diff(momentDate, "days");
+  const diffInDays = now.diff(momentDate, "days", true);
 
   if (diffInDays === 1) {
     return "Yesterday";
