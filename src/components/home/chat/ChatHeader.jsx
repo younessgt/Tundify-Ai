@@ -5,6 +5,18 @@ import { useSelector } from "react-redux";
 import DotsIcon from "@/components/svg/Dots";
 import { SearchIcon } from "@/components/svg";
 import { VideoCall } from "@mui/icons-material";
+import TranslateIcon from "@mui/icons-material/Translate";
+import {
+  MdKeyboardVoice,
+  MdDelete,
+  MdPause,
+  MdSend,
+  MdPlayArrow,
+  MdStop,
+  MdCheckCircle,
+  MdCancel,
+} from "react-icons/md";
+
 import {
   getRecieverId,
   getRecieverName,
@@ -14,6 +26,7 @@ import {
 import useSocketContext from "@/hooks/useSocket";
 import { useState, useEffect } from "react";
 import useRecipientStatus from "@/hooks/useRecipientStatus";
+import AudioTranslator from "./AudioTranslator";
 // import { motion } from "framer-motion";
 
 export default function ChatHeader() {
@@ -25,6 +38,95 @@ export default function ChatHeader() {
   const recipientId = getRecieverId(activeConversation.users, user._id);
   const { socket, isConnected } = useSocketContext();
   const isRecipientOnline = useRecipientStatus(recipientId, socket);
+
+  // State for popup visibility
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  // const [sourceLanguage, setSourceLanguage] = useState("en");
+  // const [targetLanguage, setTargetLanguage] = useState("es");
+  // const [isRecording, setIsRecording] = useState(false);
+  // const [isProcessing, setIsProcessing] = useState(false);
+  // const [transcript, setTranscript] = useState("");
+  // const [isConfirmed, setIsConfirmed] = useState(false);
+  // const [translation, setTranslation] = useState("");
+
+  // Function to toggle popup visibility
+  // const togglePopup = () => {
+  //   setIsPopupVisible((prev) => !prev);
+  // };
+
+  // const languages = [
+  //   { code: "en", name: "English" },
+  //   { code: "es", name: "Spanish" },
+  //   { code: "fr", name: "French" },
+  //   { code: "ary", name: "Darija" },
+  // ];
+
+  // const startRecording = async () => {
+  //   try {
+  //     // const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  //     // mediaRecorderRef.current = new MediaRecorder(stream);
+  //     // chunksRef.current = [];
+
+  //     // mediaRecorderRef.current.ondataavailable = (e) => {
+  //     //   chunksRef.current.push(e.data);
+  //     // };
+
+  //     // mediaRecorderRef.current.onstop = async () => {
+  //     //   const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
+  //     //   setIsProcessing(true);
+  //     //   // Simulate API call
+  //     //   setTimeout(() => {
+  //     //     setTranscript(
+  //     //       "This is a sample transcription of what you just said."
+  //     //     );
+  //     //     setIsProcessing(false);
+  //     //   }, 1500);
+  //     // };
+
+  //     // mediaRecorderRef.current.start();
+  //     setIsRecording(true);
+  //   } catch (error) {
+  //     console.error("Error accessing microphone:", error);
+  //   }
+  // };
+
+  // const stopRecording = () => {
+  //   // if (mediaRecorderRef.current && isRecording) {
+  //   //   mediaRecorderRef.current.stop();
+  //   //   setIsRecording(false);
+  //   //   mediaRecorderRef.current.stream
+  //   //     .getTracks()
+  //   //     .forEach((track) => track.stop());
+  //   // }
+  //   setIsRecording(false);
+  //   setIsProcessing(true);
+  //   setTimeout(() => {
+  //     setTranscript(
+  //       "This is a sample transcription of what you just said.hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+  //     );
+  //     setIsProcessing(false);
+  //   }, 1500);
+  // };
+
+  // const confirmTranscript = () => {
+  //   setIsConfirmed(true);
+  //   // Simulate translation API call
+  //   setTimeout(() => {
+  //     setTranslation(
+  //       "Esta es una traducción de ejemplo de lo que acabas de decir."
+  //     );
+  //   }, 1000);
+  // };
+
+  // const resetAll = () => {
+  //   setTranscript("");
+  //   setTranslation("");
+  //   setIsConfirmed(false);
+  // };
+
+  const togglePopup = () => {
+    setIsPopupVisible((prev) => !prev);
+  };
 
   return (
     <div className="w-full h-full flex justify-between items-center ">
@@ -58,8 +160,12 @@ export default function ChatHeader() {
       <div className="flex">
         <ul className="flex p-[16px]">
           <li>
-            <button className="p-2 bg-dark_bg_3 rounded-full btn">
-              <VideoCall className="dark:fill-dark_svg_1" />
+            <button
+              className="p-2 bg-dark_bg_3 rounded-full btn"
+              onClick={togglePopup}
+            >
+              {/* <VideoCall className="dark:fill-dark_svg_1" /> */}
+              <TranslateIcon className="dark:fill-dark_svg_1" />
             </button>
           </li>
           <li>
@@ -74,6 +180,11 @@ export default function ChatHeader() {
           </li>
         </ul>
       </div>
+
+      {/* Popup Component */}
+      {isPopupVisible && (
+        <AudioTranslator setIsPopupVisible={setIsPopupVisible} />
+      )}
     </div>
   );
 }
