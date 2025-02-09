@@ -19,6 +19,16 @@ This repository contains both the **backend** and **frontend** components of Tun
 
 ---
 
+## Preview
+
+<p align="center">
+  <a href="assets/images/signin.JPG"><img src="assets/thumbnails/signin.jpg" width="200"></a>
+  <a href="assets/images/signup.JPG"><img src="assets/thumbnails/signup.jpg" width="200"></a>
+  <a href="assets/images/welcome.JPG"><img src="assets/thumbnails/welcome.jpg" width="200"></a>
+  <a href="assets/images/conversation.JPG"><img src="assets/thumbnails/conversation.jpg" width="200"></a>
+  <a href="assets/images/ai-translator.JPG"><img src="assets/thumbnails/ai-tramslator.jpg" width="200"></a>
+</p>
+
 ## Tech Stack
 
 ### Backend:
