@@ -1,0 +1,164 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-roboto;
+}
+
+@layer components {
+  .btn {
+    @apply w-[40px] h-[40px] rounded-full flex items-center justify-center active:bg-dark_hover_1;
+  }
+  .rotateAnimation {
+    animation: rotate 0.2s forwards;
+  }
+  @keyframes rotate {
+    0% {
+      transform: rotate(-90deg);
+    }
+  }
+
+  .truncate {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* custom scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #202c33 #324a57; /* For Firefox */
+  }
+
+  /* For Chrome, Edge, Safari */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #324a57;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #202c33;
+    border-radius: 10px;
+    border: 2px solid #f0f0f0;
+  }
+
+  .status-text {
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .status-text.online {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hview {
+    height: calc(100vh - 300px);
+    /* padding: 8px 0; */
+  }
+  .hviewVideo {
+    height: calc(100vh - 300px);
+    padding-top: -50px;
+  }
+
+  .openEmojiAnimation {
+    animation: openAn 0.1s forwards;
+  }
+  @keyframes openAn {
+    0% {
+      transform: translateY(60px);
+    }
+  }
+
+  .custom-scrollbar-thumbnail {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #202c33;
+  }
+
+  .custom-scrollbar-thumbnail::-webkit-scrollbar {
+    height: 7px;
+  }
+
+  .custom-scrollbar-thumbnail::-webkit-scrollbar-track {
+    background: #202c33;
+  }
+
+  .custom-scrollbar-thumbnail::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar-thumbnail::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+
+  .custom-emoji-picker {
+    background: #111b21 !important;
+    width: 100% !important;
+
+    .epr-dark-theme {
+      background: #0b212e !important;
+
+      width: 100% !important;
+    }
+
+    .epr-search-container input {
+      background-color: #3e5b6b !important;
+      color: #ffffff !important;
+      /* or any color you want */
+    }
+
+    .epr-emoji-category-label {
+      /* background: #3e5b6b !important; */
+      background: transparent !important;
+    }
+
+    .epr-dark-theme {
+      background: #0b212e !important;
+
+      width: 100% !important;
+    }
+    /*--- Emoji Scroollbar*/
+
+    /* width */
+    .epr-body::-webkit-scrollbar {
+      width: 6px !important;
+    }
+
+    /* Track */
+    .epr-body::-webkit-scrollbar-track {
+      background: transparent !important;
+    }
+
+    /* Handle */
+    .epr-body::-webkit-scrollbar-thumb {
+      background: #444e54 !important;
+      border-radius: 10px;
+    }
+
+    .epr-category-nav {
+      padding: 10px 0 !important;
+    }
+    .epr-category-nav .epr-active::after {
+      content: "";
+      width: 140px;
+      height: 3px;
+      border-radius: 50%;
+      background: #00a884;
+      position: absolute;
+      bottom: -10px;
+      left: -55px;
+    }
+
+    .EmojiPickerReact {
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji", sans-serif !important;
+    }
+  }
+}
+
