@@ -16,6 +16,7 @@ import { geminiTranslate } from "@/utils/geminiTranslate";
 import { useDispatch, useSelector } from "react-redux";
 import { sendMessage } from "@/features/chatSlice";
 import useSocketContext from "@/hooks/useSocket";
+import { set } from "react-hook-form";
 
 export default function AudioTranslator({ setIsPopupVisible }) {
   const { files, activeConversation } = useSelector((state) => state.chatState);
@@ -146,7 +147,10 @@ export default function AudioTranslator({ setIsPopupVisible }) {
     setIsConfirmed(true);
     // Simulate translation API call
 
+    setIsProcessing(true);
+
     if (targetLanguage === sourceLanguage) {
+      setIsProcessing(false);
       setTranslation(currentTranscript.current);
       return;
     }
@@ -158,6 +162,7 @@ export default function AudioTranslator({ setIsPopupVisible }) {
         accessToken
       );
       console.log("translatedText", translatedText);
+      setIsProcessing(false);
       setTimeout(() => {
         setTranslation(translatedText);
       }, 1000);
@@ -330,10 +335,19 @@ export default function AudioTranslator({ setIsPopupVisible }) {
               <h3 className="text-sm font-medium text-dark_text_1 ml-3">
                 Translation:
               </h3>
+
               <div className="p-3 dark:bg-dark_bg_7 rounded-lg min-h-[80px] m-3">
-                <p className="text-dark_text_1 whitespace-normal break-words">
-                  {translation}
-                </p>
+                {isProcessing ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="animate-pulse text-dark_text_1">
+                      Processing...
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-dark_text_1 whitespace-normal break-words">
+                    {translation}
+                  </p>
+                )}
               </div>
               <div className="w-full flex justify-center items-center mt-10">
                 <div
