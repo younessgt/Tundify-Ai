@@ -80,8 +80,14 @@ exports.socketService = (socket, io) => {
     }
   });
 
+  // handle user typing
   socket.on("user-typing", (conversationId) => {
     console.log(`User is typing in conversation: ${conversationId}`);
+
+    // Emit a "typing" event to all other sockets in the same room
+    // - `socket.in(conversationId)` ensures the event is sent to all clients
+    //   in the specified room (conversationId), except for the sender's socket.
+    // - This means only other participants in the conversation receive the event.
     socket.in(conversationId).emit("typing", conversationId);
   });
 
